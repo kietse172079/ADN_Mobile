@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import WelcomeScreen from "../screens/WelcomeScreen";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginRegister/LoginScreen";
+import HomeScreen from "../screens/CustomerScreen/HomeScreen";
+import { useDispatch, useSelector } from "react-redux";
+import RegisterScreen from "../screens/LoginRegister/RegisterScreen";
+import WelcomeScreen from "../screens/LoginRegister/WelcomeScreen";
 
 const Stack = createStackNavigator();
 
@@ -37,26 +38,23 @@ function HomeStack() {
     </Stack.Navigator>
   );
 }
-export const AuthContext = React.createContext();
-export default function Navigator() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const authContext = React.useMemo(
-    () => ({
-      signIn: () => {
-        setIsAuthenticated(true);
-      },
-      signOut: () => {
-        setIsAuthenticated(false);
-      },
-    }),
-    []
-  );
+export default function Navigator() {
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await AsyncStorage.getItem("accessToken");
+      if (token) {
+        dispatch(login({ token }));
+      }
+    };
+    checkLogin();
+  }, []);
   return (
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        {isAuthenticated ? <HomeStack /> : <AuthStack />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <NavigationContainer>
+      {isLoggedIn ? <HomeStack /> : <AuthStack />}
+    </NavigationContainer>
   );
 }

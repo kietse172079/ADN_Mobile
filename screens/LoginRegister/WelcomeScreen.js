@@ -1,14 +1,14 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, Image } from "react-native";
-import { theme } from "../theme/theme";
-import { CustomButton } from "../components/Button";
+import { theme } from "../../theme/theme";
+import { CustomButton } from "../../components/Button";
 
 export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <Image
-          source={require("../assets/DNA.jpg")}
+          source={require("../../assets/DNA.jpg")}
           style={styles.logo}
           resizeMode="contain"
         />

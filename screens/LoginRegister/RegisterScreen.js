@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { theme } from "../theme/theme";
-import { CustomButton } from "../components/Button";
+import { theme } from "../../theme/theme";
+import { CustomButton } from "../../components/Button";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
