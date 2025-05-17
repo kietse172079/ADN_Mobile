@@ -6,14 +6,12 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { loginUser, loginWithGogle } from "../../services/apiAuth";
+import { loginUser } from "../../services/apiAuth";
 import { useDispatch } from "react-redux";
 import { login } from "../../feartures/user/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme } from "../../theme/theme";
 import { CustomButton } from "../../components/Button";
-import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin";
-// import { useNavigation } from "@react-navigation/native";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -47,35 +45,6 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  // google sign in
-  const handleGoogleSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-
-      const id_token = userInfo.idToken;
-
-      const response = await loginWithGogle(id_token);
-      const token =
-        response.data?.accessToken || response.token || response.data?.token;
-
-      await AsyncStorage.setItem("accessToken", token);
-      dispatch(login({ token }));
-
-      Alert.alert(
-        "Đăng nhập thành công!",
-        `Chào mừng: ${response.data?.user?.name || "người dùng"}`
-      );
-
-      navigation.navigate("Home");
-    } catch (error) {
-      console.error(error);
-      Alert.alert(
-        "Đăng nhập thất bại",
-        error.response?.data?.message || "Vui lòng thử lại sau"
-      );
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -105,13 +74,7 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
 
-      <View >
-        <GoogleSigninButton
-        size={GoogleSigninButton.Size.Wide}
-        color={GoogleSigninButton.Color.Dark}
-        onPress={handleGoogleSignIn}
-      />
-      </View>
+      
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>
           Bạn chưa có tài khoản?{" "}
