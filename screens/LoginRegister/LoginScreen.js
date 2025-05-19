@@ -1,17 +1,17 @@
-import React, { useContext, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Alert,
-} from "react-native";
-import { loginUser } from "../../services/apiAuth";
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text, TextInput, StyleSheet, Alert, Button } from "react-native";
+import { loginUser, loginWithGoogle } from "../../services/apiAuth";
 import { useDispatch } from "react-redux";
 import { login } from "../../feartures/user/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme } from "../../theme/theme";
 import { CustomButton } from "../../components/Button";
+
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri } from "expo-auth-session";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -45,6 +45,48 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+const redirectUri = makeRedirectUri({ useProxy: true });
+console.log("Redirect URI:", redirectUri);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId:
+      "185593884375-6r969vepg1t07lj9qe9j8p05bjkebrpk.apps.googleusercontent.com",
+    redirectUri: redirectUri,
+    scopes: ["profile", "email"],
+  });
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const getUserInfoAndLogin = async () => {
+        try {
+          const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+            headers: {
+              Authorization: `Bearer ${response.authentication.accessToken}`,
+            },
+          });
+          const user = await res.json();
+          console.log("Google user:", user); // user.id chính là google_id
+
+          // Gọi API backend để login bằng google_id
+          const backendResponse = await loginWithGoogle(user.id);
+
+          const token = backendResponse.token;
+          await AsyncStorage.setItem("accessToken", token);
+
+          // Dispatch vào Redux
+          dispatch(login(token));
+
+          Alert.alert("Đăng nhập Google thành công!");
+          // navigation.navigate("Home");
+        } catch (error) {
+          console.error("Google login flow error:", error);
+          Alert.alert("Đăng nhập Google thất bại", "Vui lòng thử lại sau.");
+        }
+      };
+
+      getUserInfoAndLogin();
+    }
+  }, [response]);
 
   return (
     <View style={styles.container}>
@@ -74,7 +116,14 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
 
-      
+      <View>
+        <Button
+          title="Login with Google"
+          disabled={!request}
+          onPress={() => promptAsync()}
+        />
+      </View>
+
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>
           Bạn chưa có tài khoản?{" "}

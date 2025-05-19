@@ -8,6 +8,17 @@ export const loginUser = async (email, password) => {
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
-    throw error; // Rethrow the error to handle it in the calling function
+    throw error;
+  }
+};
+
+export const loginWithGoogle = async (google_id) => {
+  try {
+    const response = await apiClient.post(API.LOGIN_GOOGLE, { google_id });
+    console.log("Login with Google response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error logging in with Google:", error);
+    throw error;
   }
 };

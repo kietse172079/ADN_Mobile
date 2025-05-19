@@ -2,6 +2,7 @@
   "expo": {
     "name": "ADN_Mobile",
     "slug": "ADN_Mobile",
+    "scheme": "yourapp",
     "owner": "anhquandev",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -25,6 +26,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }
