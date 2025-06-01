@@ -1,4 +1,4 @@
-const BASE_URL = 'https://wdp392-restapi-with-nodejs-express.onrender.com';
+const BASE_URL = 'https://restapi-dna-testing-fwdnadcqc9hsfmbf.canadacentral-01.azurewebsites.net';
 
 const API = {
   BASE_URL,
