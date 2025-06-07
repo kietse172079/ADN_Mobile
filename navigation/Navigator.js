@@ -7,7 +7,12 @@ import HomeScreen from "../screens/CustomerScreen/HomeScreen";
 import { useDispatch, useSelector } from "react-redux";
 import RegisterScreen from "../screens/LoginRegister/RegisterScreen";
 import WelcomeScreen from "../screens/LoginRegister/WelcomeScreen";
+import ProfileScreen from "../screens/CustomerScreen/ProfileScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { login } from "../feartures/user/authSlice";
+import apiClient from "../services/apiClient";
+import API from "../services/apiConfig";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,27 +57,47 @@ function AppTabs() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === "Home")
+          if (route.name === "Trang chủ")
             iconName = focused ? "home" : "home-outline";
-          else if (route.name === "Profile")
-            iconName = focused ? "person" : "person-outline";
-          else if (route.name === "Schedule")
+          else if (route.name === "Dịch vụ")
+            iconName = focused ? "construct" : "construct-outline";
+          else if (route.name === "Lịch")
             iconName = focused ? "calendar" : "calendar-outline";
-          else if (route.name === "Notifications")
+          else if (route.name === "Thông báo")
             iconName = focused ? "notifications" : "notifications-outline";
-          else if (route.name === "Account")
-            iconName = focused ? "settings" : "settings-outline";
+          else if (route.name === "Tài khoản")
+            iconName = focused ? "person" : "person-outline";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={HomeScreen} />
-      <Tab.Screen name="Schedule" component={HomeScreen} />
-      <Tab.Screen name="Notifications" component={HomeScreen} />
-      <Tab.Screen name="Account" component={HomeScreen} />
+      <Tab.Screen
+        name="Trang chủ"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Dịch vụ"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Lịch"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Thông báo"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Tài khoản"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 }
@@ -85,7 +110,17 @@ export default function Navigator() {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem("accessToken");
       if (token) {
-        dispatch(login({ token }));
+        // Gọi API lấy user
+        try {
+          const response = await apiClient.get(API.LOGIN, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const user =
+            response.data.data || response.data.user || response.data;
+          dispatch(login({ token, user }));
+        } catch (err) {
+          dispatch(logout());
+        }
       }
     };
     checkLogin();

@@ -21,32 +21,28 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       const response = await loginUser(email, password);
-      console.log(response.data);
+      console.log("response:", response);
+      console.log("response.data:", response.data);
+      console.log("response.user:", response.user);
+
       const token = response.data.token;
+      const user = response.user;
       if (token) {
         await AsyncStorage.setItem("accessToken", token);
-        dispatch(login(token));
+        dispatch(login({ token, user }));
         Alert.alert(
           "Đăng nhập thành công!",
-          `Chào mừng: ${response.data.user?.name || "người dùng"}`
+          `Chào mừng: ${user?.firstName || "người dùng"}`
         );
-        // navigation.navigate("Home");
       } else {
         Alert.alert("Đăng nhập thất bại", "Vui lòng kiểm tra lại thông tin");
       }
     } catch (err) {
-      console.error(err);
-      const errorMessage =
-        err.response?.data?.message || // lỗi trả về từ server
-        err.message || // lỗi chung
-        "Đã xảy ra lỗi không xác định";
-
-      Alert.alert("Đăng nhập thất bại", errorMessage);
+      // ...existing code...
     }
   };
-
-const redirectUri = makeRedirectUri({ useProxy: true });
-console.log("Redirect URI:", redirectUri);
+  const redirectUri = makeRedirectUri({ useProxy: true });
+  console.log("Redirect URI:", redirectUri);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId:

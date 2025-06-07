@@ -20,21 +20,19 @@ export default function HomeScreen() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  // const navigation = useNavigation();
-  
 
-  const handleLogout = async () => {
-    dispatch(logout());
-    await AsyncStorage.removeItem("accessToken");
-    // navigation.navigate("Login");
-    Alert.alert("Đăng xuất thành công");
-  };
+  // const handleLogout = async () => {
+  //   dispatch(logout());
+  //   await AsyncStorage.removeItem("accessToken");
+  //   // navigation.navigate("Login");
+  //   Alert.alert("Đăng xuất thành công");
+  // };
 
   const mainFeatures = [
     { id: "1", title: "Lịch hẹn" },
     { id: "2", title: "Liên hệ" },
     { id: "3", title: "Cộng đồng hỏi đáp" },
-    { id: "4", title: "Sổ tiêm" },
+    { id: "4", title: "Cẩm nang" },
   ];
   const newServices = [
     {
@@ -59,7 +57,6 @@ export default function HomeScreen() {
         style={styles.banner}
         resizeMode="cover"
       />
-
 
       {/* Chức năng chính */}
       <FlatList
@@ -110,7 +107,7 @@ export default function HomeScreen() {
         style={styles.servicesContainer}
       />
 
-      <CustomButton title="Logout" onPress={handleLogout} type="primary" />
+      {/* <CustomButton title="Logout" onPress={handleLogout} type="primary" /> */}
     </View>
   );
 }
