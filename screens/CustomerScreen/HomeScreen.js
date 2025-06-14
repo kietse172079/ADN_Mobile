@@ -1,52 +1,52 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Alert,
   Image,
   TouchableOpacity,
   FlatList,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../feartures/user/authSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchServices } from "../../feartures/service/serviceSlice";
 import { theme } from "../../theme/theme";
-import { CustomButton } from "../../components/Button";
-import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function HomeScreen() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const { services, loading, error } = useSelector((state) => state.service);
+  const [selectedType, setSelectedType] = useState("civil");
 
-  // const handleLogout = async () => {
-  //   dispatch(logout());
-  //   await AsyncStorage.removeItem("accessToken");
-  //   // navigation.navigate("Login");
-  //   Alert.alert("Đăng xuất thành công");
-  // };
+  // Lọc dịch vụ theo loại đã chọn
+  const filteredServices = services.filter(
+    (item) => item.type === selectedType
+  );
+
+  useEffect(() => {
+    dispatch(
+      fetchServices({
+        pageNum: 1,
+        pageSize: 10,
+        is_active: true,
+        sort_by: "created_at",
+        sort_order: "desc",
+      })
+    );
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Dữ liệu services trong Redux:", services);
+    if (error) {
+      console.log("Lỗi khi fetch service:", error);
+    }
+  }, [services, error]);
 
   const mainFeatures = [
     { id: "1", title: "Lịch hẹn" },
     { id: "2", title: "Liên hệ" },
     { id: "3", title: "Cộng đồng hỏi đáp" },
     { id: "4", title: "Cẩm nang" },
-  ];
-  const newServices = [
-    {
-      id: "1",
-      title: "Cộng dịch vụ khách hàng",
-      subtitle: "Nhận - Tiên - Đề xuất",
-      image: require("../../assets/DNA.jpg"),
-    },
-    {
-      id: "2",
-      title: "Đặt lịch nhận - Xác nhận lịch tư vấn",
-      subtitle: "Xem ngay lịch khám, gói khám và bác sĩ",
-      image: require("../../assets/DNA.jpg"),
-    },
   ];
 
   return (
@@ -87,27 +87,71 @@ export default function HomeScreen() {
       />
 
       {/* Dịch vụ mới */}
-      <Text style={styles.sectionTitle}>Dịch vụ mới</Text>
+      <Text style={styles.sectionTitle}>Dịch vụ</Text>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedType === "civil" && styles.filterButtonActive,
+          ]}
+          onPress={() => setSelectedType("civil")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedType === "civil" && styles.filterTextActive,
+            ]}
+          >
+            Dân sự
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedType === "administrative" && styles.filterButtonActive,
+          ]}
+          onPress={() => setSelectedType("administrative")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedType === "administrative" && styles.filterTextActive,
+            ]}
+          >
+            Hành chính
+          </Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
-        data={newServices}
-        keyExtractor={(item) => item.id}
+        data={filteredServices}
+        keyExtractor={(item) => item._id?.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.serviceCard}>
-            <Image source={item.image} style={styles.serviceImage} />
-            <View style={styles.serviceTextContainer}>
-              <Text style={styles.serviceTitle}>{item.title}</Text>
-              <Text style={styles.serviceSubtitle}>{item.subtitle}</Text>
-            </View>
             <Image
-              source={require("../../assets/DNA.jpg")}
-              style={styles.arrowIcon}
+              source={
+                item.image_url
+                  ? { uri: item.image_url }
+                  : require("../../assets/DNA.jpg")
+              }
+              style={styles.serviceImage}
             />
+            <View style={styles.serviceTextContainer}>
+              <Text style={styles.serviceTitle}>{item.name}</Text>
+              <Text style={styles.serviceSubtitle}>{item.description}</Text>
+              <Text style={styles.servicePrice}>
+                Giá: {item.price?.toLocaleString("vi-VN")}đ
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
-        style={styles.servicesContainer}
+        ListEmptyComponent={
+          loading ? (
+            <Text>Đang tải dịch vụ...</Text>
+          ) : (
+            <Text>Không có dịch vụ nào</Text>
+          )
+        }
       />
-
-      {/* <CustomButton title="Logout" onPress={handleLogout} type="primary" /> */}
     </View>
   );
 }
@@ -192,6 +236,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
   },
+  servicePrice: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: theme.colors.primary,
+    marginTop: theme.spacing.small,
+  },
   arrowIcon: {
     width: 20,
     height: 20,
@@ -212,5 +262,31 @@ const styles = StyleSheet.create({
   healthCheckText: {
     fontSize: 14,
     color: theme.colors.text,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  filterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+    marginHorizontal: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  filterButtonActive: {
+    backgroundColor: "#00a9a4",
+    borderColor: "#F2F0F0",
+  },
+  filterText: {
+    color: "#333",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  filterTextActive: {
+    color: "#fff",
   },
 });
