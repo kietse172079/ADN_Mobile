@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { login } from "../feartures/user/authSlice";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
+import DetailService from "../screens/CustomerScreen/DetailService";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,17 +41,34 @@ function AuthStack() {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="DetailService"
+        component={DetailService}
+        options={{ title: "Chi tiết dịch vụ" }}
+      />
     </Stack.Navigator>
   );
 }
 
-// function HomeStack() {
-//   return (
-//     <Stack.Navigator initialRouteName="Home">
-//       <Stack.Screen name="Home" component={HomeScreen} />
-//     </Stack.Navigator>
-//   );
-// }
+const HomeStackNav = createStackNavigator();
+
+function HomeStack() {
+  return (
+    <HomeStackNav.Navigator>
+      <HomeStackNav.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStackNav.Screen
+        name="DetailService"
+        component={DetailService}
+        options={{ title: "Chi tiết dịch vụ" }}
+      />
+    </HomeStackNav.Navigator>
+  );
+}
+
 function AppTabs() {
   return (
     <Tab.Navigator
@@ -69,13 +87,13 @@ function AppTabs() {
             iconName = focused ? "person" : "person-outline";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#007AFF",
+        tabBarActiveTintColor: "#00a9a4",
         tabBarInactiveTintColor: "gray",
       })}
     >
       <Tab.Screen
         name="Trang chủ"
-        component={HomeScreen}
+        component={HomeStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen

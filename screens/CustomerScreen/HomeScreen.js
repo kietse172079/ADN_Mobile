@@ -12,16 +12,16 @@ import { fetchServices } from "../../feartures/service/serviceSlice";
 import { theme } from "../../theme/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
   const { services, loading, error } = useSelector((state) => state.service);
   const [selectedType, setSelectedType] = useState("civil");
 
   // Lọc dịch vụ theo loại đã chọn
-  const filteredServices = services.filter(
-    (item) => item.type === selectedType
-  );
+  const filteredServices = selectedType
+    ? services.filter((item) => item.type === selectedType)
+    : services;
 
   useEffect(() => {
     dispatch(
@@ -34,13 +34,6 @@ export default function HomeScreen() {
       })
     );
   }, [dispatch]);
-
-  useEffect(() => {
-    console.log("Dữ liệu services trong Redux:", services);
-    if (error) {
-      console.log("Lỗi khi fetch service:", error);
-    }
-  }, [services, error]);
 
   const mainFeatures = [
     { id: "1", title: "Lịch hẹn" },
@@ -59,36 +52,53 @@ export default function HomeScreen() {
       />
 
       {/* Chức năng chính */}
-      <FlatList
-        data={mainFeatures}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.featureCard}>
-            <Ionicons
-              name={
-                item.title === "Lịch hẹn"
-                  ? "calendar"
-                  : item.title === "Liên hệ"
-                    ? "call"
-                    : item.title === "Cộng đồng hỏi đáp"
-                      ? "chatbox"
-                      : "medkit"
-              }
-              size={30}
-              color="#000"
-              style={styles.featureIcon}
-            />
-            <Text style={styles.featureText}>{item.title}</Text>
-          </View>
-        )}
-        style={styles.featuresContainer}
-      />
-
+      <View style={styles.mainFeaturesWrapper}>
+        <FlatList
+          data={mainFeatures}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.featureCard}>
+              <Ionicons
+                name={
+                  item.title === "Lịch hẹn"
+                    ? "calendar"
+                    : item.title === "Liên hệ"
+                      ? "call"
+                      : item.title === "Cộng đồng hỏi đáp"
+                        ? "chatbox"
+                        : "medkit"
+                }
+                size={30}
+                color="#000"
+                style={styles.featureIcon}
+              />
+              <Text style={styles.featureText}>{item.title}</Text>
+            </View>
+          )}
+          style={styles.featuresContainer}
+        />
+      </View>
       {/* Dịch vụ mới */}
       <Text style={styles.sectionTitle}>Dịch vụ</Text>
       <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedType === "" && styles.filterButtonActive,
+          ]}
+          onPress={() => setSelectedType("")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedType === "" && styles.filterTextActive,
+            ]}
+          >
+            Tất cả dịch vụ
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.filterButton,
@@ -126,7 +136,12 @@ export default function HomeScreen() {
         data={filteredServices}
         keyExtractor={(item) => item._id?.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.serviceCard}>
+          <TouchableOpacity
+            style={styles.serviceCard}
+            onPress={() =>
+              navigation.navigate("DetailService", { serviceId: item._id })
+            }
+          >
             <Image
               source={
                 item.image_url
@@ -137,7 +152,7 @@ export default function HomeScreen() {
             />
             <View style={styles.serviceTextContainer}>
               <Text style={styles.serviceTitle}>{item.name}</Text>
-              <Text style={styles.serviceSubtitle}>{item.description}</Text>
+              {/* <Text style={styles.serviceSubtitle}>{item.description}</Text> */}
               <Text style={styles.servicePrice}>
                 Giá: {item.price?.toLocaleString("vi-VN")}đ
               </Text>
@@ -288,5 +303,11 @@ const styles = StyleSheet.create({
   },
   filterTextActive: {
     color: "#fff",
+  },
+  mainFeaturesWrapper: {
+    height: 150, // hoặc 120 tuỳ ý bạn
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: theme.spacing.medium,
   },
 });

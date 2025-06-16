@@ -5,12 +5,14 @@ export const fetchServiceById = createAsyncThunk(
   "service/fetchById",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API.SERVICE}/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch service");
+      const response = await fetch(`${API.FETCH_SERVICE_BY_ID(id)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
       const data = await response.json();
-      return data;
+      return data.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || "Network error");
     }
   }
 );
