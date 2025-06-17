@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchServiceById } from "../../feartures/service/serviceSlice";
 
-export default function DetailService({ route }) {
+export default function DetailService({ route, navigation }) {
   const { serviceId } = route.params;
   const dispatch = useDispatch();
   const { selectedService, loading } = useSelector((state) => state.service);
@@ -68,7 +68,14 @@ export default function DetailService({ route }) {
         </Text>
       </View>
       {/* Nút đặt lịch hoặc liên hệ */}
-      <TouchableOpacity style={styles.bookButton} onPress={() => {}}>
+      <TouchableOpacity
+        style={styles.bookButton}
+        onPress={() =>
+          navigation.navigate("CreateAppointment", {
+            serviceId: selectedService._id,
+          })
+        }
+      >
         <Text style={styles.bookButtonText}>Đặt lịch ngay</Text>
       </TouchableOpacity>
     </ScrollView>

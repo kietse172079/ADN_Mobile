@@ -14,6 +14,7 @@ import { login } from "../feartures/user/authSlice";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
 import DetailService from "../screens/CustomerScreen/DetailService";
+import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,6 +65,11 @@ function HomeStack() {
         name="DetailService"
         component={DetailService}
         options={{ title: "Chi tiết dịch vụ" }}
+      />
+      <HomeStackNav.Screen
+        name="CreateAppointment"
+        component={CreateAppointment}
+        options={{ title: "Đặt lịch hẹn" }}
       />
     </HomeStackNav.Navigator>
   );

@@ -21,10 +21,13 @@ export const fetchChildServices = createAsyncThunk(
   "service/fetchChildServices",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API.SERVICE}/${id}/child`);
+      const response = await fetch(API.FETCH_CHILD_SERVICES(id), {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
       if (!response.ok) throw new Error("Failed to fetch child services");
       const data = await response.json();
-      return data;
+      return data.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
