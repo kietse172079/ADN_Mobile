@@ -86,7 +86,7 @@ export default function CreateAppointment({ route, navigation }) {
 
     const payload = {
       service_id: serviceId,
-      slot_id: selectedSlot.id,
+      slot_id: slots.id,
       type: type || "self",
       collection_address: collectionAddress,
     };
@@ -95,16 +95,24 @@ export default function CreateAppointment({ route, navigation }) {
     try {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
-      if (result) {
-        if (result.meta?.requestStatus === "fulfilled") {
-          Alert.alert("Đặt lịch thành công!");
-          navigation.goBack();
-        } else {
-          Alert.alert("Đặt lịch thất bại!", result.payload || "Có lỗi xảy ra");
-        }
+      if (result.success) {
+        // if (result.meta?.requestStatus === "fulfilled") {
+        Alert.alert("Đặt lịch thành công!");
+        navigation.goBack();
+        // } else {
+        //   Alert.alert("Đặt lịch thất bại!", result.payload || "Có lỗi xảy ra");
+        // }
       } else {
-        Alert.alert("Đặt lịch thất bại!", "Không nhận được phản hồi từ server");
+        return {
+          success: false,
+          message: Alert.alert(
+            "Đặt lịch thất bại!",
+            "Không nhận được phản hồi từ server"
+          ),
+        };
       }
+
+      return result;
     } catch (error) {
       console.log("Error during booking:", error);
       Alert.alert(

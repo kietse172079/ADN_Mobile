@@ -39,7 +39,7 @@ const appointmentSlice = createSlice({
   initialState: {
     loading: false,
     error: null,
-    appointment: null,
+    appointment: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -49,8 +49,7 @@ const appointmentSlice = createSlice({
         state.error = null;
       })
       .addCase(createAppointment.fulfilled, (state, action) => {
-        state.loading = false;
-        state.appointment = action.payload;
+        state.appointment.push(action.payload)
       })
       .addCase(createAppointment.rejected, (state, action) => {
         state.loading = false;
