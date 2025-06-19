@@ -20,7 +20,7 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       const response = await loginUser(email, password);
-      console.log("Login response:", response);
+      // console.log("Login response:", response);
 
       const token = response.data.token;
       if (token) {

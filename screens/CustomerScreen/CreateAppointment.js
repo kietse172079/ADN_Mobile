@@ -60,7 +60,8 @@ export default function CreateAppointment({ route, navigation }) {
       type: slotType,
     })
       .then(() => {
-        console.log("Slots fetched:", slots);
+        // console.log("Slots fetched:", slots);
+        // console.log("Slots fetched slotid:", slots.id);
       })
       .catch((err) => console.log("Error fetching slots:", err))
       .finally(() => setIsLoadingSlots(false));
@@ -86,33 +87,21 @@ export default function CreateAppointment({ route, navigation }) {
 
     const payload = {
       service_id: serviceId,
-      slot_id: slots.id,
+      slot_id: selectedSlot.id,
       type: type || "self",
       collection_address: collectionAddress,
     };
-    console.log("Sending payload:", payload);
-    console.log("Using token:", token);
+    // console.log("Sending payload:", payload);
+    // console.log("Using token:", token);
     try {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
-      if (result.success) {
-        // if (result.meta?.requestStatus === "fulfilled") {
+      if (result) {
         Alert.alert("Đặt lịch thành công!");
         navigation.goBack();
-        // } else {
-        //   Alert.alert("Đặt lịch thất bại!", result.payload || "Có lỗi xảy ra");
-        // }
       } else {
-        return {
-          success: false,
-          message: Alert.alert(
-            "Đặt lịch thất bại!",
-            "Không nhận được phản hồi từ server"
-          ),
-        };
+        Alert.alert("Đặt lịch thất bại!", "Không nhận được phản hồi từ server");
       }
-
-      return result;
     } catch (error) {
       console.log("Error during booking:", error);
       Alert.alert(
@@ -125,7 +114,7 @@ export default function CreateAppointment({ route, navigation }) {
   };
 
   const handleSlotPress = (item) => {
-    console.log("Slot pressed:", item.id);
+    // console.log("Slot pressed:", item.id);
     setSelectedSlot((prev) => (prev?.id === item.id ? null : item));
   };
 
@@ -205,12 +194,7 @@ export default function CreateAppointment({ route, navigation }) {
         />
       )}
 
-      {loadingAppointment || isSubmitting ? (
-        <ActivityIndicator size="large" color="#007AFF" />
-      ) : (
-        <Button title="Đặt lịch" onPress={handleSubmit} />
-      )}
-      {error && <Text style={styles.error}>{error}</Text>}
+      <Button title="Đặt lịch" onPress={handleSubmit} />
     </View>
   );
 }

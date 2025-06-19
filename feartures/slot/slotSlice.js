@@ -26,34 +26,35 @@ export const fetchAvailableSlots = createAsyncThunk(
       });
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
-      console.log("Full API response:", data); // Debug response
+      // console.log("Full API response:", data); // Debug response
       const allSlots =
         data.data?.pageData?.flatMap(
-          (item) =>
-            item.time_slots?.map((slot) => ({
-              id: slot._id || slot.id, // Hỗ trợ cả _id và id
+          (slot) =>
+            slot.time_slots.map((timeSlot) => ({
+              id: slot._id?.$oid || slot._id, // Lấy $oid nếu có, nếu không thì lấy trực tiếp _id
+              time_id: timeSlot._id?.$oid || timeSlot._id, // Lấy $oid của time slot
               start_time: new Date(
-                slot.year || slot.start_time?.year || 2025,
-                (slot.month || slot.start_time?.month || 6) - 1,
-                slot.day || slot.start_time?.day || 17,
-                slot.start_time?.hour || 0,
-                slot.start_time?.minute || 0
+                timeSlot.year,
+                timeSlot.month - 1,
+                timeSlot.day,
+                timeSlot.start_time.hour,
+                timeSlot.start_time.minute
               ).toISOString(),
               end_time: new Date(
-                slot.year || slot.end_time?.year || 2025,
-                (slot.month || slot.end_time?.month || 6) - 1,
-                slot.day || slot.end_time?.day || 17,
-                slot.end_time?.hour || 0,
-                slot.end_time?.minute || 0
+                timeSlot.year,
+                timeSlot.month - 1,
+                timeSlot.day,
+                timeSlot.end_time.hour,
+                timeSlot.end_time.minute
               ).toISOString(),
-              staff: item.staff_profile_ids?.find(
-                (staff) => staff._id === slot.staff_id
+              staff: slot.staff_profile_ids.find(
+                (staff) => staff?.$oid === timeSlot.staff_id
               ) || { user_id: { first_name: "N/A" } },
             })) || []
         ) || [];
-      console.log("Mapped slots:", allSlots); // Debug slots
+      // console.log("Mapped slots:", allSlots); // Debug slots
       if (allSlots.length === 0) {
-        console.log("No slots mapped, checking data structure:", data.data);
+        // console.log("No slots mapped, checking data structure:", data.data);
       }
       return allSlots;
     } catch (error) {

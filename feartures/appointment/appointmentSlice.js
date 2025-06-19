@@ -8,7 +8,7 @@ export const createAppointment = createAsyncThunk(
     let token;
     try {
       token = await AsyncStorage.getItem("accessToken");
-      console.log("Token retrieved in createAppointment:", token);
+      // console.log("Token retrieved in createAppointment:", token);
       if (!token) {
         throw new Error("No token, authorization denied.");
       }
@@ -22,7 +22,7 @@ export const createAppointment = createAsyncThunk(
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      console.log("API Response:", data);
+      // console.log("API Response:", data);
       if (!response.ok) {
         throw new Error(data.message || "Tạo lịch hẹn thất bại");
       }

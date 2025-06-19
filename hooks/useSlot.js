@@ -8,7 +8,7 @@ export const useSlot = () => {
 
   const getAvailableSlots = useCallback(
     (params) => {
-      console.log("Fetching slots with params:", params); // Debug
+      // console.log("Fetching slots with params:", params); // Debug
       return dispatch(fetchAvailableSlots(params));
     },
     [dispatch]
