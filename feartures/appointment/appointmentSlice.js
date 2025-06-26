@@ -5,14 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const createAppointment = createAsyncThunk(
   "appointment/createAppointment",
   async (payload, { rejectWithValue }) => {
-    let token;
     try {
-      token = await AsyncStorage.getItem("accessToken");
-      // console.log("Token retrieved in createAppointment:", token);
+      const token = await AsyncStorage.getItem("accessToken");
       if (!token) {
         throw new Error("No token, authorization denied.");
       }
-
       const response = await fetch(API.CREATE_APPOINTMENT, {
         method: "POST",
         headers: {
@@ -22,13 +19,36 @@ export const createAppointment = createAsyncThunk(
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      // console.log("API Response:", data);
       if (!response.ok) {
         throw new Error(data.message || "Tạo lịch hẹn thất bại");
       }
       return data.data;
     } catch (error) {
       console.log("Create appointment error:", error.message);
+      return rejectWithValue(error.message || "Network error");
+    }
+  }
+);
+
+export const fetchAppointments = createAsyncThunk(
+  "appointment/fetchAppointments",
+  async (params, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem("accessToken");
+      const url = `${API.FETCH_APPOINTMENT}?${new URLSearchParams(params).toString()}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Lỗi khi lấy danh sách lịch hẹn");
+      }
+      return data.data;
+    } catch (error) {
       return rejectWithValue(error.message || "Network error");
     }
   }
@@ -49,11 +69,15 @@ const appointmentSlice = createSlice({
         state.error = null;
       })
       .addCase(createAppointment.fulfilled, (state, action) => {
-        state.appointment.push(action.payload)
+        state.appointment.push(action.payload);
       })
       .addCase(createAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchAppointments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointment = action.payload.pageData || [];
       });
   },
 });

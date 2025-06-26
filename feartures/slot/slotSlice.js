@@ -31,8 +31,8 @@ export const fetchAvailableSlots = createAsyncThunk(
         data.data?.pageData?.flatMap(
           (slot) =>
             slot.time_slots.map((timeSlot) => ({
-              id: slot._id?.$oid || slot._id, // Lấy $oid nếu có, nếu không thì lấy trực tiếp _id
-              time_id: timeSlot._id?.$oid || timeSlot._id, // Lấy $oid của time slot
+              id: slot._id?.$oid || slot._id, 
+              time_id: timeSlot._id?.$oid || timeSlot._id, 
               start_time: new Date(
                 timeSlot.year,
                 timeSlot.month - 1,

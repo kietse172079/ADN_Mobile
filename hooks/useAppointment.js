@@ -1,5 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { createAppointment } from "../feartures/appointment/appointmentSlice";
+import {
+  createAppointment,
+  fetchAppointments,
+} from "../feartures/appointment/appointmentSlice";
 import { useCallback } from "react";
 
 export const useAppointment = () => {
@@ -10,18 +13,28 @@ export const useAppointment = () => {
 
   const bookAppointment = useCallback(
     async (payload) => {
-      console.log("Dispatching appointment with payload:", payload);
+      // console.log("Dispatching appointment with payload:", payload);
       const result = await dispatch(createAppointment(payload)).unwrap();
-      console.log("Appointment result after unwrap:", result);
+      // console.log("Appointment result after unwrap:", result);
       return result;
     },
     [dispatch]
   );
+
+  const getAppointments = async (params) => {
+    try {
+      const result = await dispatch(fetchAppointments(params)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error?.message || error };
+    }
+  };
 
   return {
     loading,
     error,
     appointment,
     bookAppointment,
+    getAppointments,
   };
 };

@@ -15,6 +15,7 @@ import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
 import DetailService from "../screens/CustomerScreen/DetailService";
 import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
+import ViewAppointment from "../screens/CustomerScreen/ViewAppointment";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -109,7 +110,7 @@ function AppTabs() {
       />
       <Tab.Screen
         name="Lịch"
-        component={HomeScreen}
+        component={ViewAppointment}
         options={{ headerShown: false }}
       />
       <Tab.Screen

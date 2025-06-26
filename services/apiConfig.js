@@ -1,4 +1,5 @@
-const BASE_URL = 'https://restapi-dna-testing-fwdnadcqc9hsfmbf.canadacentral-01.azurewebsites.net';
+// const BASE_URL = 'https://restapi-dna-testing-fwdnadcqc9hsfmbf.canadacentral-01.azurewebsites.net';
+const BASE_URL = "https://restapi-dnatesting.vercel.app";
 
 const API = {
   BASE_URL,
@@ -9,6 +10,7 @@ const API = {
   FETCH_SERVICE_BY_ID: (id) => `${BASE_URL}/api/service/${id}`,
   FETCH_CHILD_SERVICES: (id) => `${BASE_URL}/api/service/${id}/child`,
   CREATE_APPOINTMENT: `${BASE_URL}/api/appointment/create`,
+  FETCH_APPOINTMENT: `${BASE_URL}/api/appointment/search`,
   FETCH_AVAILABLE_SLOTS: `${BASE_URL}/api/slot/available`,
 };
 
