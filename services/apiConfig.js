@@ -1,5 +1,6 @@
 // const BASE_URL = 'https://restapi-dna-testing-fwdnadcqc9hsfmbf.canadacentral-01.azurewebsites.net';
-const BASE_URL = "https://restapi-dnatesting.vercel.app";
+// const BASE_URL = "https://restapi-dnatesting.vercel.app";
+const BASE_URL = "https://restapi-dnatesting.up.railway.app";
 
 const API = {
   BASE_URL,
