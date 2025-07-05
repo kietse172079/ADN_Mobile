@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -10,16 +10,18 @@ import WelcomeScreen from "../screens/LoginRegister/WelcomeScreen";
 import ProfileScreen from "../screens/CustomerScreen/ProfileScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { login } from "../feartures/user/authSlice";
+import { login, logout } from "../feartures/user/authSlice";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
 import DetailService from "../screens/CustomerScreen/DetailService";
 import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
 import ViewAppointment from "../screens/CustomerScreen/ViewAppointment";
+import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Auth stack cho login/register
 function AuthStack() {
   return (
     <Stack.Navigator initialRouteName="Welcome">
@@ -52,8 +54,8 @@ function AuthStack() {
   );
 }
 
+// HomeStack cho tab Trang chủ
 const HomeStackNav = createStackNavigator();
-
 function HomeStack() {
   return (
     <HomeStackNav.Navigator>
@@ -72,10 +74,35 @@ function HomeStack() {
         component={CreateAppointment}
         options={{ title: "Đặt lịch hẹn" }}
       />
+      <HomeStackNav.Screen
+        name="AppointmentDetail"
+        component={AppointmentDetail}
+        options={{ title: "Chi tiết lịch hẹn" }}
+      />
     </HomeStackNav.Navigator>
   );
 }
 
+// AppointmentStack cho tab Lịch
+const AppointmentStackNav = createStackNavigator();
+function AppointmentStack() {
+  return (
+    <AppointmentStackNav.Navigator>
+      <AppointmentStackNav.Screen
+        name="ViewAppointment"
+        component={ViewAppointment}
+        options={{ headerShown: false }}
+      />
+      <AppointmentStackNav.Screen
+        name="AppointmentDetail"
+        component={AppointmentDetail}
+        options={{ title: "Chi tiết lịch hẹn" }}
+      />
+    </AppointmentStackNav.Navigator>
+  );
+}
+
+// Tabs chính
 function AppTabs() {
   return (
     <Tab.Navigator
@@ -110,7 +137,7 @@ function AppTabs() {
       />
       <Tab.Screen
         name="Lịch"
-        component={ViewAppointment}
+        component={AppointmentStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen
@@ -135,7 +162,6 @@ export default function Navigator() {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem("accessToken");
       if (token) {
-        // Gọi API lấy user
         try {
           const response = await apiClient.get(API.LOGIN, {
             headers: { Authorization: `Bearer ${token}` },
@@ -149,7 +175,8 @@ export default function Navigator() {
       }
     };
     checkLogin();
-  }, []);
+  }, [dispatch]);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? <AppTabs /> : <AuthStack />}

@@ -5,8 +5,10 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { useAppointment } from "../../hooks/useAppointment";
+import { useNavigation } from "@react-navigation/native";
 
 const PAGE_SIZE = 10;
 
@@ -25,6 +27,8 @@ const statusColor = (status) => {
       return "#9907FA"; // tim
     case "sample_received":
       return "#FA07B9"; // hồng
+    case "testing":
+      return "#5ED3EB"; // xanh nhạt
     default:
       return "#9E9E9E"; // xám
   }
@@ -44,6 +48,8 @@ const translateStatus = (status) => {
       return "Đã Lấy mẫu";
     case "sample_received":
       return "Đã nhận mẫu";
+    case "testing":
+      return "Đang xét nghiệm";
     default:
       return status || "Không rõ";
   }
@@ -67,6 +73,7 @@ const Tag = ({ color, children }) => (
 /* ---------- Component ---------- */
 export default function ViewAppointment() {
   const { loading, getAppointments } = useAppointment();
+  const navigation = useNavigation();
 
   const [appointments, setAppointments] = useState([]);
   const [pageNum, setPageNum] = useState(1);
@@ -82,7 +89,6 @@ export default function ViewAppointment() {
       const items = res?.data?.pageData || [];
       const totalPages = res?.data?.pageInfo?.totalPages || 1;
 
-      /* Gộp & loại bỏ trùng _id */
       setAppointments((prev) => {
         const merged = [...prev, ...items];
         const uniqueMap = new Map();
@@ -110,20 +116,24 @@ export default function ViewAppointment() {
 
   /* ---------- Render ---------- */
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.title}>
-        Dịch vụ: {item.service_id?.name || item.service_id || "N/A"}
-      </Text>
-
-      <Text>Ngày hẹn: {formatDate(item.appointment_date)}</Text>
-
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Text>Trạng thái: </Text>
-        <Tag color={statusColor(item.status)}>
-          {translateStatus(item.status)}
-        </Tag>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("AppointmentDetail", { appointment: item })
+      }
+    >
+      <View style={styles.card}>
+        <Text style={styles.title}>
+          Dịch vụ: {item.service_id?.name || item.service_id || "N/A"}
+        </Text>
+        <Text>Ngày hẹn: {formatDate(item.appointment_date)}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text>Trạng thái: </Text>
+          <Tag color={statusColor(item.status)}>
+            {translateStatus(item.status)}
+          </Tag>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderFooter = () =>
@@ -135,6 +145,7 @@ export default function ViewAppointment() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Danh sách đặt lịch</Text>
       {loading && appointments.length === 0 ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color="#007AFF" />
@@ -158,7 +169,14 @@ export default function ViewAppointment() {
 
 /* ---------- Styles ---------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 12 },
+  container: { flex: 1, backgroundColor: "#fff", padding: 12, paddingTop: 32 },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+    color: "#00a9a4",
+    alignSelf: "center",
+  },
   card: {
     backgroundColor: "#f9f9f9",
     borderRadius: 10,
