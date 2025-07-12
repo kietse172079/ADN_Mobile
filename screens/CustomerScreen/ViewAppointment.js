@@ -6,9 +6,12 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useAppointment } from "../../hooks/useAppointment";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { theme } from "../../theme/theme";
 
 const PAGE_SIZE = 10;
 
@@ -142,9 +145,50 @@ export default function ViewAppointment() {
         <ActivityIndicator size="small" color="#007AFF" />
       </View>
     ) : null;
+  const mainFeatures = [
+    { id: "1", title: "Lịch hẹn" },
+    { id: "2", title: "Liên hệ" },
+    { id: "3", title: "Cộng đồng hỏi đáp" },
+    { id: "4", title: "Cẩm nang" },
+  ];
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../assets/DNA.jpg")}
+        style={styles.banner}
+        resizeMode="cover"
+      />
+
+      {/* Chức năng chính */}
+      <View style={styles.mainFeaturesWrapper}>
+        <FlatList
+          data={mainFeatures}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.featureCard}>
+              <Ionicons
+                name={
+                  item.title === "Lịch hẹn"
+                    ? "calendar"
+                    : item.title === "Liên hệ"
+                      ? "call"
+                      : item.title === "Cộng đồng hỏi đáp"
+                        ? "chatbox"
+                        : "medkit"
+                }
+                size={30}
+                color="#000"
+                style={styles.featureIcon}
+              />
+              <Text style={styles.featureText}>{item.title}</Text>
+            </View>
+          )}
+          style={styles.featuresContainer}
+        />
+      </View>
       <Text style={styles.header}>Danh sách đặt lịch</Text>
       {loading && appointments.length === 0 ? (
         <View style={styles.center}>
@@ -176,6 +220,45 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: "#00a9a4",
     alignSelf: "center",
+  },
+  banner: {
+    width: "100%",
+    height: 150,
+    borderRadius: 12,
+    marginBottom: theme.spacing.medium,
+  },
+  mainFeaturesWrapper: {
+    height: 140,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: theme.spacing.medium,
+  },
+  featuresContainer: {
+    marginVertical: theme.spacing.medium,
+  },
+  featureCard: {
+    backgroundColor: "#E0F7F6", // nhẹ từ primary
+    paddingVertical: theme.spacing.medium,
+    paddingHorizontal: theme.spacing.small,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: theme.spacing.small,
+    width: 90,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  featureIcon: {
+    marginBottom: theme.spacing.small,
+  },
+  featureText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: theme.colors.primary,
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#f9f9f9",

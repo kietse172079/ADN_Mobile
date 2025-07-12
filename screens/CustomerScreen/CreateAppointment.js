@@ -17,14 +17,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CreateAppointment({ route, navigation }) {
   const { serviceId } = route.params;
-  const [type, setType] = useState("");
+  const [type, setType] = useState("self");
   const [collectionAddress, setCollectionAddress] = useState("");
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingSlots, setIsLoadingSlots] = useState(false); // Thêm trạng thái loading riêng
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
   const [selectedSlot, setSelectedSlot] = useState(null);
 
@@ -52,6 +52,7 @@ export default function CreateAppointment({ route, navigation }) {
   }, [startDate]);
 
   useEffect(() => {
+    if (type === "self") return; // Không cần lấy slot nếu tự lấy mẫu
     setIsLoadingSlots(true);
     const slotType = type === "" ? undefined : `${type}_collected`;
     getAvailableSlots({
@@ -68,9 +69,21 @@ export default function CreateAppointment({ route, navigation }) {
   }, [startDate, endDate, type, getAvailableSlots]);
 
   const handleSubmit = async () => {
-    if (!serviceId || !selectedSlot || !collectionAddress) {
-      Alert.alert("Vui lòng nhập đầy đủ thông tin và chọn slot!");
-      return;
+    if (type === "self") {
+      if (!serviceId) {
+        Alert.alert("Vui lòng chọn dịch vụ!");
+        return;
+      }
+    } else if (type === "facility") {
+      if (!serviceId || !selectedSlot) {
+        Alert.alert("Vui lòng chọn dịch vụ và slot!");
+        return;
+      }
+    } else if (type === "home") {
+      if (!serviceId || !selectedSlot || !collectionAddress) {
+        Alert.alert("Vui lòng nhập đầy đủ thông tin và chọn slot!");
+        return;
+      }
     }
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -87,12 +100,13 @@ export default function CreateAppointment({ route, navigation }) {
 
     const payload = {
       service_id: serviceId,
-      slot_id: selectedSlot.id,
       type: type || "self",
-      collection_address: collectionAddress,
     };
     // console.log("Sending payload:", payload);
     // console.log("Using token:", token);
+    if (type !== "self") payload.slot_id = selectedSlot.id;
+    if (type === "home") payload.collection_address = collectionAddress;
+
     try {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
@@ -122,6 +136,19 @@ export default function CreateAppointment({ route, navigation }) {
     <View style={styles.container}>
       <Text style={styles.label}>ID dịch vụ: {serviceId}</Text>
 
+      <Text style={styles.label}>Phương thức lấy mẫu</Text>
+      <View style={styles.pickerWrapper}>
+        <Picker
+          selectedValue={type}
+          onValueChange={setType}
+          style={styles.picker}
+        >
+          <Picker.Item label="Tự gửi mẫu" value="self" />
+          <Picker.Item label="Lấy mẫu tại nhà" value="home" />
+          <Picker.Item label="Lấy mẫu tại cơ sở" value="facility" />
+        </Picker>
+      </View>
+
       <Text style={styles.label}>Ngày bắt đầu (YYYY-MM-DD)</Text>
       <TextInput
         style={styles.input}
@@ -137,8 +164,8 @@ export default function CreateAppointment({ route, navigation }) {
       <Text style={styles.label}>Ngày kết thúc (YYYY-MM-DD)</Text>
       <TextInput style={styles.input} value={endDate} editable={false} />
 
-      <Text style={styles.label}>Loại lấy mẫu (lọc slot)</Text>
-      <View style={styles.pickerWrapper}>
+      {/* <Text style={styles.label}>Loại lấy mẫu (lọc slot)</Text> */}
+      {/* <View style={styles.pickerWrapper}>
         <Picker
           selectedValue={type}
           onValueChange={setType}
@@ -149,17 +176,21 @@ export default function CreateAppointment({ route, navigation }) {
           <Picker.Item label="Lấy mẫu tại nhà" value="home" />
           <Picker.Item label="Lấy mẫu tại cơ sở" value="facility" />
         </Picker>
-      </View>
+      </View> */}
 
-      <Text style={styles.label}>Địa chỉ lấy mẫu</Text>
-      <TextInput
-        style={styles.input}
-        value={collectionAddress}
-        onChangeText={setCollectionAddress}
-        placeholder="Nhập địa chỉ"
-      />
+      {type === "home" && (
+        <>
+          <Text style={styles.label}>Địa chỉ lấy mẫu</Text>
+          <TextInput
+            style={styles.input}
+            value={collectionAddress}
+            onChangeText={setCollectionAddress}
+            placeholder="Nhập địa chỉ"
+          />
+        </>
+      )}
 
-      <Text style={styles.label}>Chọn slot thời gian</Text>
+      <Text style={styles.label}>Chọn lịch hẹn</Text>
       {isLoadingSlots || loadingSlotsFromHook ? (
         <ActivityIndicator size="small" color="#007AFF" />
       ) : slotError ? (
@@ -168,33 +199,63 @@ export default function CreateAppointment({ route, navigation }) {
         <FlatList
           data={slots}
           keyExtractor={(item) => item.id}
-          extraData={selectedSlot} // Đảm bảo re-render khi selectedSlot thay đổi
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.slotItem,
-                selectedSlot?.id === item.id && styles.slotItemSelected,
-              ]}
-              onPress={() => handleSlotPress(item)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.slotText}>
-                {new Date(item.start_time).toLocaleString()} -{" "}
-                {new Date(item.end_time).toLocaleTimeString()}
-              </Text>
-              <Text style={styles.slotStaff}>
-                Nhân viên: {item.staff?.user_id?.first_name || "N/A"}
-              </Text>
-            </TouchableOpacity>
-          )}
+          extraData={selectedSlot}
+          renderItem={({ item }) => {
+            const isSelected = selectedSlot?.id === item.id;
+            const isDisabled = type === "self";
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.slotItem,
+                  isSelected && !isDisabled && styles.slotItemSelected,
+                  isDisabled && { opacity: 0.5 },
+                ]}
+                onPress={() => {
+                  if (!isDisabled) handleSlotPress(item);
+                }}
+                activeOpacity={isDisabled ? 1 : 0.7}
+                disabled={isDisabled}
+              >
+                <Text style={styles.slotText}>
+                  {new Date(item.start_time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  h -{" "}
+                  {new Date(item.end_time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  h , ngày {new Date(item.start_time).toLocaleDateString()}
+                </Text>
+                <Text style={styles.slotStaff}>
+                  Nhân viên: {item.staff?.user_id?.first_name || "N/A"}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
           ListEmptyComponent={
             <Text style={styles.error}>Không có slot nào khả dụng</Text>
           }
           style={{ maxHeight: 200, marginBottom: 10 }}
         />
       )}
+      {type === "self" && (
+        <Text style={styles.info}>
+          Vì tự gửi mẫu nên quý khách không cần chọn lịch hẹn, chúng tôi sẽ
+          thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ ngày
+          nhận mẫu.
+        </Text>
+      )}
 
-      <Button title="Đặt lịch" onPress={handleSubmit} />
+      <TouchableOpacity
+        style={[styles.submitButton, isSubmitting && { opacity: 0.6 }]}
+        onPress={handleSubmit}
+        disabled={isSubmitting}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.submitButtonText}>Đặt lịch</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -218,10 +279,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   picker: {
-    height: 40,
+    height: 50,
     width: "100%",
   },
   error: { color: "red", marginTop: 10, textAlign: "center" },
+  info: {
+    color: "#007AFF",
+    marginTop: 10,
+    marginBottom: 10,
+    fontStyle: "italic",
+    textAlign: "center",
+  },
   slotItem: {
     padding: 10,
     borderWidth: 1,
@@ -236,4 +304,17 @@ const styles = StyleSheet.create({
   },
   slotText: { fontWeight: "bold" },
   slotStaff: { fontSize: 13, color: "#555" },
+  submitButton: {
+    backgroundColor: "#00a9a4",
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  submitButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+    letterSpacing: 1,
+  },
 });
