@@ -30,6 +30,8 @@ const statusColor = (status) => {
       return "#9907FA"; // tim
     case "sample_received":
       return "#FA07B9"; // hồng
+    case "sample_assigned":
+      return "#078dfaff";
     case "testing":
       return "#5ED3EB"; // xanh nhạt
     default:
@@ -51,6 +53,8 @@ const translateStatus = (status) => {
       return "Đã Lấy mẫu";
     case "sample_received":
       return "Đã nhận mẫu";
+    case "sample_assigned":
+      return "Đã phân công mẫu";
     case "testing":
       return "Đang xét nghiệm";
     default:
@@ -74,7 +78,7 @@ const Tag = ({ color, children }) => (
 );
 
 /* ---------- Component ---------- */
-export default function ViewAppointment() {
+export default function ViewAppointmentschedulelist() {
   const { loading, getAppointments } = useAppointment();
   const navigation = useNavigation();
 

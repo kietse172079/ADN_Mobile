@@ -1,5 +1,17 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Modal,
+  ScrollView,
+} from "react-native";
+import { Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import useSample from "../../hooks/useSample";
+import ModalApplyKit from "./ModalApplyKit";
 
 const statusColor = (status) => {
   switch ((status || "").toLowerCase()) {
@@ -39,17 +51,124 @@ const translateStatus = (status) => {
   }
 };
 
+const typeColor = (type) => {
+  switch ((type || "").toLowerCase()) {
+    case "self":
+      return "#3ea900ff";
+    case "home":
+      return "#2196F3";
+    case "facility":
+      return "#2BEAED";
+    default:
+      return "#9E9E9E";
+  }
+};
+
+const paymentColor = (status) => {
+  switch ((status || "").toLowerCase()) {
+    case "paid":
+      return "#1291e6ff";
+    case "unpaid":
+      return "#F44336";
+    default:
+      return "#9E9E9E";
+  }
+};
+
 const StatusBadge = ({ status }) => (
   <View style={[styles.badge, { backgroundColor: statusColor(status) }]}>
     <Text style={styles.badgeText}>{translateStatus(status)}</Text>
   </View>
 );
 
+const TypeBadge = ({ type }) => (
+  <View style={[styles.badge, { backgroundColor: typeColor(type) }]}>
+    <Text style={styles.badgeText}>
+      {type === "self"
+        ? "Tự gửi mẫu"
+        : type === "home"
+          ? "Lấy mẫu tại nhà"
+          : type === "facility"
+            ? "Lấy mẫu tại cơ sở"
+            : type}
+    </Text>
+  </View>
+);
+
+const PaymentBadge = ({ status }) => (
+  <View style={[styles.badge, { backgroundColor: paymentColor(status) }]}>
+    <Text style={styles.badgeText}>
+      {status === "paid"
+        ? "Đã thanh toán"
+        : status === "unpaid"
+          ? "Chưa thanh toán"
+          : status}
+    </Text>
+  </View>
+);
+
 export default function AppointmentDetail({ route }) {
   const { appointment } = route.params;
+  const navigation = useNavigation();
+  const { addSamples, getSamplesByAppointment } = useSample();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Xử lý yêu cầu bộ dụng cụ
+  const handleRequestKit = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        appointment_id: appointment._id,
+        sample_types: ["blood"],
+        notes: "",
+        person_info_list: [
+          {
+            name: "Default Name",
+            dob: "",
+            relationship: "",
+            birth_place: "",
+            nationality: "",
+            identity_document: "",
+          },
+        ],
+      };
+      const res = await addSamples(payload);
+      if (res.success) {
+        Alert.alert("Thành công", "Yêu cầu bộ dụng cụ thành công!");
+        setModalVisible(false);
+      } else {
+        Alert.alert("Lỗi", res.error || "Yêu cầu bộ dụng cụ thất bại");
+      }
+    } catch (error) {
+      Alert.alert("Lỗi", error.message || "Yêu cầu bộ dụng cụ thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Xử lý xem mẫu
+  const handleViewSamples = async () => {
+    setLoading(true);
+    try {
+      const res = await getSamplesByAppointment(appointment._id);
+      if (res.success) {
+        navigation.navigate("ViewSampleAppointment", {
+          appointmentId: appointment._id,
+          samples: res.data,
+        });
+      } else {
+        Alert.alert("Lỗi", res.error || "Không thể tải danh sách mẫu");
+      }
+    } catch (error) {
+      Alert.alert("Lỗi", error.message || "Không thể tải danh sách mẫu");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <View style={styles.screen}>
+    <ScrollView style={styles.screen}>
       <View style={styles.card}>
         <Text style={styles.header}>Chi tiết lịch hẹn</Text>
         <View style={styles.row}>
@@ -72,7 +191,7 @@ export default function AppointmentDetail({ route }) {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Loại lấy mẫu:</Text>
-          <Text style={styles.value}>{appointment.type}</Text>
+          <TypeBadge type={appointment.type} />
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Địa chỉ lấy mẫu:</Text>
@@ -82,7 +201,7 @@ export default function AppointmentDetail({ route }) {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Thanh toán:</Text>
-          <Text style={styles.value}>{appointment.payment_status}</Text>
+          <PaymentBadge status={appointment.payment_status} />
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Nhân viên phụ trách:</Text>
@@ -106,8 +225,40 @@ export default function AppointmentDetail({ route }) {
             {appointment.administrative_case_id || "N/A"}
           </Text>
         </View>
+
+        {/* Nút hành động */}
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="contained"
+            onPress={() => setModalVisible(true)}
+            loading={loading}
+            disabled={loading || appointment.status === "completed"}
+            style={[styles.button, { backgroundColor: "#00a9a4" }]}
+            labelStyle={{ color: "#fff", fontWeight: "bold" }}
+          >
+            Nhận bộ dụng cụ
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={handleViewSamples}
+            loading={loading}
+            disabled={loading || !appointment._id}
+            style={[styles.button, { borderColor: "#00a9a4" }]}
+            labelStyle={{ color: "#00a9a4", fontWeight: "bold" }}
+          >
+            Xem Mẫu
+          </Button>
+        </View>
       </View>
-    </View>
+
+      {/* ModalApplyKit */}
+      <ModalApplyKit
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        appointmentId={appointment._id}
+        onSubmit={handleRequestKit}
+      />
+    </ScrollView>
   );
 }
 
@@ -116,7 +267,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#e6f7f7",
     padding: 16,
-    justifyContent: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -166,5 +316,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 13,
     letterSpacing: 1,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
   },
 });

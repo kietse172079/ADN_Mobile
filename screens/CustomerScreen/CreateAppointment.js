@@ -221,12 +221,12 @@ export default function CreateAppointment({ route, navigation }) {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                  h -{" "}
+                   -{" "}
                   {new Date(item.end_time).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                  h , ngày {new Date(item.start_time).toLocaleDateString()}
+                   , ngày {new Date(item.start_time).toLocaleDateString()}
                 </Text>
                 <Text style={styles.slotStaff}>
                   Nhân viên: {item.staff?.user_id?.first_name || "N/A"}

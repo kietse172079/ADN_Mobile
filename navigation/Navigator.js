@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -15,8 +15,9 @@ import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
 import DetailService from "../screens/CustomerScreen/DetailService";
 import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
-import ViewAppointment from "../screens/CustomerScreen/ViewAppointment";
+import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointmentschedulelist";
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
+import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment"; 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,14 +90,19 @@ function AppointmentStack() {
   return (
     <AppointmentStackNav.Navigator>
       <AppointmentStackNav.Screen
-        name="ViewAppointment"
-        component={ViewAppointment}
+        name="ViewAppointmentschedulelist"
+        component={ViewAppointmentschedulelist}
         options={{ headerShown: false }}
       />
       <AppointmentStackNav.Screen
         name="AppointmentDetail"
         component={AppointmentDetail}
         options={{ title: "Chi tiết lịch hẹn" }}
+      />
+      <AppointmentStackNav.Screen
+        name="ViewSampleAppointment"
+        component={ViewSampleAppointment}
+        options={{ title: "Danh sách mẫu" }}
       />
     </AppointmentStackNav.Navigator>
   );
@@ -157,25 +163,36 @@ function AppTabs() {
 export default function Navigator() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = await AsyncStorage.getItem("accessToken");
-      if (token) {
-        try {
+      setLoading(true);
+      try {
+        const token = await AsyncStorage.getItem("accessToken");
+        if (token) {
           const response = await apiClient.get(API.LOGIN, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const user =
             response.data.data || response.data.user || response.data;
           dispatch(login({ token, user }));
-        } catch (err) {
+        } else {
           dispatch(logout());
         }
+      } catch (err) {
+        console.error("Login check error:", err);
+        dispatch(logout());
+      } finally {
+        setLoading(false);
       }
     };
     checkLogin();
   }, [dispatch]);
+
+  if (loading) {
+    return null; // Hoặc hiển thị loading indicator
+  }
 
   return (
     <NavigationContainer>

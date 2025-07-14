@@ -7,12 +7,23 @@ const API = {
   LOGIN: `${BASE_URL}/api/auth`,
   REGISTER: `${BASE_URL}/api/users`,
   LOGIN_WITH_GOOGLE: `${BASE_URL}/api/auth/google`,
+
+  //Service endpoint
   FETCH_SERVICES: `${BASE_URL}/api/service/search`,
   FETCH_SERVICE_BY_ID: (id) => `${BASE_URL}/api/service/${id}`,
   FETCH_CHILD_SERVICES: (id) => `${BASE_URL}/api/service/${id}/child`,
+
+  //Apponitment endpoints
   CREATE_APPOINTMENT: `${BASE_URL}/api/appointment/create`,
   FETCH_APPOINTMENT: `${BASE_URL}/api/appointment/search`,
   FETCH_AVAILABLE_SLOTS: `${BASE_URL}/api/slot/available`,
+
+  // Sample endpoints
+  ADD_SAMPLES_TO_APPOINTMENT: `${BASE_URL}/api/sample/add-to-appointment`,
+  FETCH_SAMPLES_BY_APPOINTMENT: (id) =>`${BASE_URL}/api/sample/appointment/${id}`,
+  BATCH_SUBMIT_SAMPLES: `${BASE_URL}/api/sample/batch-submit`,
+  UPLOAD_SAMPLE_PERSON_IMAGE: `${BASE_URL}/api/sample/upload-person-image`,
+  FETCH_SAMPLE_BY_ID: (id) => `${BASE_URL}/api/sample/${id}`,
 };
 
 export default API;
