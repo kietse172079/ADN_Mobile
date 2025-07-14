@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  StyleSheet,
 } from "react-native";
 import { Button, Card, Checkbox } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -34,7 +35,6 @@ const ViewSampleAppointment = () => {
     }
   };
 
-  // Lấy trạng thái batch hoàn thành từ sample đầu tiên (nếu có)
   const sampleArray = samples.length ? samples : initialSamples || [];
   const appointmentStatus = sampleArray[0]?.appointment_id?.status;
   const kitStatus = sampleArray[0]?.kit_id?.status;
@@ -119,14 +119,8 @@ const ViewSampleAppointment = () => {
       (item.status === "pending" || item.status === "collected");
     const person = item.person_info || {};
     return (
-      <Card style={{ marginVertical: 6, borderRadius: 12, elevation: 2 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            padding: 10,
-          }}
-        >
+      <Card style={styles.card}>
+        <View style={styles.cardContent}>
           {canSelect ? (
             <Checkbox
               status={
@@ -141,44 +135,31 @@ const ViewSampleAppointment = () => {
               color="#00a9a4"
             />
           ) : (
-            <View style={{ width: 24, height: 24, marginRight: 8 }} />
+            <View style={styles.placeholderCheckbox} />
           )}
-          {/* Ảnh đại diện */}
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              overflow: "hidden",
-              backgroundColor: "#eee",
-              marginRight: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <View style={styles.avatarContainer}>
             {person.image_url ? (
               <Image
                 source={{ uri: person.image_url }}
-                style={{ width: 40, height: 40 }}
+                style={styles.avatar}
                 resizeMode="cover"
               />
             ) : (
-              <Text style={{ fontSize: 18, color: "#888" }}>
+              <Text style={styles.avatarInitial}>
                 {person.name ? person.name.charAt(0).toUpperCase() : "?"}
               </Text>
             )}
           </View>
-          {/* Thông tin người dùng */}
-          <View>
-            <Text style={{ fontWeight: "bold" }}>
+          <View style={styles.infoContainer}>
+            <Text style={styles.nameText} numberOfLines={1}>
               {person.name || "Chưa có tên"}
             </Text>
-            <Text style={{ color: "#666" }}>
+            <Text style={styles.dobText} numberOfLines={1}>
               {person.dob
                 ? new Date(person.dob).toLocaleDateString()
                 : "Chưa có ngày sinh"}
             </Text>
-            <Text style={{ color: "#888", fontSize: 12 }}>
+            <Text style={styles.statusText} numberOfLines={1}>
               {isBatchCompleted
                 ? "(Đã hoàn thành)"
                 : item.status !== "pending" && item.status !== "collected"
@@ -188,17 +169,9 @@ const ViewSampleAppointment = () => {
           </View>
           <TouchableOpacity
             onPress={() => handleUploadImage(item._id)}
-            style={{ marginLeft: "auto" }}
+            style={styles.uploadButton}
           >
-            <Text
-              style={{
-                color: "#00a9a4",
-                marginLeft: 10,
-                fontWeight: "bold",
-              }}
-            >
-              Tải ảnh
-            </Text>
+            <Text style={styles.uploadText}>Tải ảnh</Text>
           </TouchableOpacity>
         </View>
       </Card>
@@ -206,15 +179,15 @@ const ViewSampleAppointment = () => {
   };
 
   return (
-    <View
-      style={{ flex: 1, backgroundColor: "#f8f8f8", paddingHorizontal: 10 }}
-    >
+    <View style={styles.container}>
       <FlatList
         data={sampleArray}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
-        ListEmptyComponent={<Text>Không tìm thấy mẫu nào.</Text>}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Không tìm thấy mẫu nào.</Text>
+        }
+        contentContainerStyle={styles.listContent}
       />
 
       <Button
@@ -222,13 +195,105 @@ const ViewSampleAppointment = () => {
         onPress={handleSubmitSamples}
         loading={isSubmitting}
         disabled={isBatchCompleted || !selectedSampleIds.length || isSubmitting}
-        style={{ marginBottom: 10, backgroundColor: "#00a9a4" }}
-        labelStyle={{ color: "#fff", fontWeight: "bold" }}
+        style={styles.submitButton}
+        labelStyle={styles.submitLabel}
       >
         Gửi mẫu đã chọn ({selectedSampleIds.length})
       </Button>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f8f8",
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  card: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+    marginVertical: 6,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  placeholderCheckbox: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+  },
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#eee",
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+  },
+  avatarInitial: {
+    fontSize: 18,
+    color: "#888",
+  },
+  infoContainer: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  nameText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#333",
+    maxWidth: "70%",
+  },
+  dobText: {
+    color: "#666",
+    fontSize: 14,
+  },
+  statusText: {
+    color: "#888",
+    fontSize: 12,
+  },
+  uploadButton: {
+    padding: 5,
+  },
+  uploadText: {
+    color: "#00a9a4",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#666",
+    padding: 20,
+  },
+  submitButton: {
+    marginBottom: 10,
+    backgroundColor: "#00a9a4",
+    borderRadius: 8,
+  },
+  submitLabel: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+});
 
 export default ViewSampleAppointment;
