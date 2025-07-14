@@ -27,6 +27,8 @@ const statusColor = (status) => {
       return "#9907FA";
     case "sample_received":
       return "#FA07B9";
+    case "sample_assigned":
+      return "#078dfaff";
     default:
       return "#00a9a4";
   }
@@ -46,6 +48,8 @@ const translateStatus = (status) => {
       return "Đã lấy mẫu";
     case "sample_received":
       return "Đã nhận mẫu";
+    case "sample_assigned":
+      return "Đã phân công mẫu";
     default:
       return status || "Không rõ";
   }

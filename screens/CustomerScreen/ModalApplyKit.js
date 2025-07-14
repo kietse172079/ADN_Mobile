@@ -11,8 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { addSamplesToAppointment } from "../../feartures/sample/sampleSlice";
+import useSample from "../../hooks/useSample";
 
 const sampleTypeOptions = [
   { label: "Máu", value: "blood" },
@@ -21,7 +20,7 @@ const sampleTypeOptions = [
 ];
 
 const ModalApplyKit = ({ visible, onClose, appointmentId, onSubmit }) => {
-  const dispatch = useDispatch();
+  const { addSamples } = useSample();
   const scrollRef = useRef(null);
 
   const initialFormData = {
@@ -160,11 +159,11 @@ const ModalApplyKit = ({ visible, onClose, appointmentId, onSubmit }) => {
         dob: convertToDateString((p.dob || "").trim()),
       })),
     };
-    console.log("Payload gửi lên:", payload);
+    // console.log("Payload gửi lên:", payload);
     try {
-      const res = await dispatch(addSamplesToAppointment(payload)).unwrap();
-      console.log("Kết quả trả về:", res);
-      if (res.success) {
+      const res = await addSamples(payload);
+      // console.log("Kết quả trả về:", res);
+      if (res.success && res.data?.success) {
         Alert.alert("Thành công", "Yêu cầu bộ dụng cụ thành công!");
         onClose();
         setFormData({
@@ -182,9 +181,16 @@ const ModalApplyKit = ({ visible, onClose, appointmentId, onSubmit }) => {
             },
           ],
         });
+      } else if (res.data?.message === "No available kits found") {
+        Alert.alert(
+          "Lỗi",
+          "Không còn bộ dụng cụ phù hợp để cấp phát. Vui lòng liên hệ quản trị viên hoặc thử lại sau."
+        );
       } else {
-        Alert.alert("Lỗi", res.error || "Yêu cầu bộ dụng cụ thất bại");
-        console.log("API trả về lỗi:", res);
+        Alert.alert(
+          "Lỗi",
+          res.data?.error || res.error || "Yêu cầu bộ dụng cụ thất bại"
+        );
       }
     } catch (error) {
       Alert.alert("Lỗi", error.message || "Yêu cầu bộ dụng cụ thất bại");

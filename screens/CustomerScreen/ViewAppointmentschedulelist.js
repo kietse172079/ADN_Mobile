@@ -101,10 +101,10 @@ export default function ViewAppointmentschedulelist() {
         const uniqueMap = new Map();
         merged.forEach((item) => uniqueMap.set(item._id, item));
         const unique = Array.from(uniqueMap.values());
-        console.log(
-          "📦 Items:",
-          unique.map((a) => a._id)
-        );
+        // console.log(
+        //   "📦 Items:",
+        //   unique.map((a) => a._id)
+        // );
         return unique;
       });
 
