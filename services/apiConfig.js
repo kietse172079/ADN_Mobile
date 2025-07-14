@@ -24,6 +24,10 @@ const API = {
   BATCH_SUBMIT_SAMPLES: `${BASE_URL}/api/sample/batch-submit`,
   UPLOAD_SAMPLE_PERSON_IMAGE: `${BASE_URL}/api/sample/upload-person-image`,
   FETCH_SAMPLE_BY_ID: (id) => `${BASE_URL}/api/sample/${id}`,
+
+  // Payment endpoints
+  CREATE_PAYMENT_INTENT: `${BASE_URL}/api/payments/appointment`,
+  VERIFY_PAYMENT: `${BASE_URL}/api/payments`,
 };
 
 export default API;

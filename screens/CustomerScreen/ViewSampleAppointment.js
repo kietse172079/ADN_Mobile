@@ -7,11 +7,13 @@ import {
   Alert,
   Image,
   StyleSheet,
+  Modal,
 } from "react-native";
 import { Button, Card, Checkbox } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import useSample from "../../hooks/useSample";
+import ViewSampleAppointmentDetail from "./ViewSampleAppointmentDetail";
 
 const ViewSampleAppointment = () => {
   const route = useRoute();
@@ -21,6 +23,8 @@ const ViewSampleAppointment = () => {
     useSample();
   const [selectedSampleIds, setSelectedSampleIds] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedSampleId, setSelectedSampleId] = useState(null);
 
   useEffect(() => {
     fetchSamples();
@@ -67,7 +71,7 @@ const ViewSampleAppointment = () => {
       if (res.success && res.data?.success) {
         Alert.alert("Success", "Submit successful!");
         setSelectedSampleIds([]);
-        fetchSamples();
+        await fetchSamples();
       } else {
         Alert.alert("Error", res.data?.error || res.error || "Submit failed!");
       }
@@ -100,7 +104,7 @@ const ViewSampleAppointment = () => {
         const res = await uploadPersonImage(sampleId, imageFile);
         if (res.success && res.data?.success) {
           Alert.alert("Success", "Image uploaded successfully!");
-          fetchSamples();
+          await fetchSamples();
         } else {
           Alert.alert(
             "Error",
@@ -113,6 +117,16 @@ const ViewSampleAppointment = () => {
     }
   };
 
+  const handleViewDetail = (sampleId) => {
+    setSelectedSampleId(sampleId);
+    setModalVisible(true);
+  };
+
+  const handleImageUploadSuccess = () => {
+    setModalVisible(false);
+    fetchSamples(); // Làm mới danh sách sau khi upload ảnh
+  };
+
   const renderItem = ({ item }) => {
     const canSelect =
       !isBatchCompleted &&
@@ -120,7 +134,10 @@ const ViewSampleAppointment = () => {
     const person = item.person_info || {};
     return (
       <Card style={styles.card}>
-        <View style={styles.cardContent}>
+        <TouchableOpacity
+          onPress={() => handleViewDetail(item._id)}
+          style={styles.cardContent}
+        >
           {canSelect ? (
             <Checkbox
               status={
@@ -173,7 +190,7 @@ const ViewSampleAppointment = () => {
           >
             <Text style={styles.uploadText}>Tải ảnh</Text>
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </Card>
     );
   };
@@ -200,6 +217,21 @@ const ViewSampleAppointment = () => {
       >
         Gửi mẫu đã chọn ({selectedSampleIds.length})
       </Button>
+
+      <Modal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <ViewSampleAppointmentDetail
+            sampleId={selectedSampleId}
+            onClose={() => setModalVisible(false)}
+            onImageUploadSuccess={handleImageUploadSuccess}
+          />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -293,6 +325,12 @@ const styles = StyleSheet.create({
   submitLabel: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 
