@@ -99,6 +99,8 @@ const ViewSampleAppointmentDetail = ({
         return "#078dfaff"; // xanh dương nhạt
       case "testing":
         return "#5ED3EB"; // xanh nhạt
+      case "received":
+        return "#1f44e9ff";
       default:
         return "#9E9E9E"; // xám
     }
@@ -122,6 +124,8 @@ const ViewSampleAppointmentDetail = ({
         return "Đã phân công mẫu";
       case "testing":
         return "Đang xét nghiệm";
+      case "received":
+        return "Đã nhận";
       default:
         return status || "Không rõ";
     }

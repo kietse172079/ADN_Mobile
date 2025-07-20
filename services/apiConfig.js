@@ -16,6 +16,7 @@ const API = {
   //Apponitment endpoints
   CREATE_APPOINTMENT: `${BASE_URL}/api/appointment/create`,
   FETCH_APPOINTMENT: `${BASE_URL}/api/appointment/search`,
+  FETCH_APPOINTMENT_BY_ID: (id) => `${BASE_URL}/api/appointment/${id}`,
   FETCH_AVAILABLE_SLOTS: `${BASE_URL}/api/slot/available`,
 
   // Sample endpoints

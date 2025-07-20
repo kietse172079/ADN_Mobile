@@ -19,6 +19,7 @@ import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointme
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
 import ViewService from "../screens/CustomerScreen/ViewService";
+import PaymentScreen from "../screens/CustomerScreen/PaymentScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -104,6 +105,11 @@ function AppointmentStack() {
         name="ViewSampleAppointment"
         component={ViewSampleAppointment}
         options={{ title: "Danh sách mẫu" }}
+      />
+      <AppointmentStackNav.Screen
+        name="PaymentScreen"
+        component={PaymentScreen}
+        options={{ title: "Thanh toán" }}
       />
     </AppointmentStackNav.Navigator>
   );

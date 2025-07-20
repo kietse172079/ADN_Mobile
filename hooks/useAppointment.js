@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createAppointment,
   fetchAppointments,
+  getAppointmentById,
 } from "../feartures/appointment/appointmentSlice";
 import { useCallback } from "react";
 
@@ -30,11 +31,21 @@ export const useAppointment = () => {
     }
   };
 
+  const getAppointmentDetail = async (id) => {
+    try {
+      const result = await dispatch(getAppointmentById(id)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error?.message || error };
+    }
+  };
+
   return {
     loading,
     error,
     appointment,
     bookAppointment,
     getAppointments,
+    getAppointmentDetail,
   };
 };

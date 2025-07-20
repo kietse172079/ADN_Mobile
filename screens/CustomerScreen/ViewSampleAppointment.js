@@ -15,6 +15,62 @@ import * as ImagePicker from "expo-image-picker";
 import useSample from "../../hooks/useSample";
 import ViewSampleAppointmentDetail from "./ViewSampleAppointmentDetail";
 
+const statusColor = (status) => {
+  switch (status?.toLowerCase()) {
+    case "pending":
+      return "#FFA500"; // cam
+    case "confirmed":
+      return "#2196F3"; // xanh dương
+    case "completed":
+      return "#4CAF50"; // xanh lá
+    case "cancelled":
+      return "#F44336"; // đỏ
+    case "sample_collected":
+      return "#9907FA"; // tím
+    case "sample_received":
+      return "#FA07B9"; // hồng
+    case "sample_assigned":
+      return "#078dfaff"; // xanh dương nhạt
+    case "testing":
+      return "#5ED3EB"; // xanh nhạt
+    case "received":
+      return "#1f44e9ff";
+    default:
+      return "#9E9E9E"; // xám
+  }
+};
+
+const translateStatus = (status) => {
+  switch (status?.toLowerCase()) {
+    case "pending":
+      return "Chờ xác nhận";
+    case "confirmed":
+      return "Đã xác nhận";
+    case "completed":
+      return "Hoàn thành";
+    case "cancelled":
+      return "Đã hủy";
+    case "sample_collected":
+      return "Đã lấy mẫu";
+    case "sample_received":
+      return "Đã nhận mẫu";
+    case "sample_assigned":
+      return "Đã phân công mẫu";
+    case "testing":
+      return "Đang xét nghiệm";
+    case "received":
+      return "Đã nhận";
+    default:
+      return status || "Không rõ";
+  }
+};
+
+const Tag = ({ color, children }) => (
+  <View style={[styles.tag, { backgroundColor: color }]}>
+    <Text style={styles.tagText}>{children}</Text>
+  </View>
+);
+
 const ViewSampleAppointment = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -39,7 +95,15 @@ const ViewSampleAppointment = () => {
     }
   };
 
+  const navigateToPayment = () => {
+    navigation.navigate("PaymentScreen", {
+      appointmentId,
+      sampleIds: sampleArray.map((s) => s._id),
+    });
+  };
+
   const sampleArray = samples.length ? samples : initialSamples || [];
+  const paymentStatus = sampleArray[0]?.appointment_id?.payment_status;
   const appointmentStatus = sampleArray[0]?.appointment_id?.status;
   const kitStatus = sampleArray[0]?.kit_id?.status;
   const isBatchCompleted =
@@ -178,18 +242,24 @@ const ViewSampleAppointment = () => {
             </Text>
             <Text style={styles.statusText} numberOfLines={1}>
               {isBatchCompleted
-                ? "(Đã hoàn thành)"
+                ? "(Đã gửi mẫu)"
                 : item.status !== "pending" && item.status !== "collected"
-                  ? "(Đã gửi)"
+                  ? ""
                   : ""}
             </Text>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => handleUploadImage(item._id)}
             style={styles.uploadButton}
           >
             <Text style={styles.uploadText}>Tải ảnh</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text>Trạng thái: </Text>
+            <Tag color={statusColor(item.status)}>
+              {translateStatus(item.status)}
+            </Tag>
+          </View>
         </TouchableOpacity>
       </Card>
     );
@@ -206,6 +276,17 @@ const ViewSampleAppointment = () => {
         }
         contentContainerStyle={styles.listContent}
       />
+
+      {appointmentStatus === "sample_received" && paymentStatus !== "paid" && (
+        <Button
+          mode="contained"
+          onPress={navigateToPayment}
+          style={styles.submitButton}
+          labelStyle={styles.submitLabel}
+        >
+          Thanh toán
+        </Button>
+      )}
 
       <Button
         mode="contained"
@@ -332,6 +413,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  tag: {
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 4,
+    alignSelf: "flex-start",
+  },
+  tagText: { color: "#fff", fontWeight: "bold" },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
 
 export default ViewSampleAppointment;

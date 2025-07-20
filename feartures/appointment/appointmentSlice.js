@@ -53,6 +53,32 @@ export const fetchAppointments = createAsyncThunk(
     }
   }
 );
+export const getAppointmentById = createAsyncThunk(
+  "appointment/getById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No token, authorization denied.");
+      }
+      const response = await fetch(API.FETCH_APPOINTMENT_BY_ID(id), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Lỗi khi lấy chi tiết lịch hẹn");
+      }
+      return data.data;
+    } catch (error) {
+      console.log("Get appointment by ID error:", error.message);
+      return rejectWithValue(error.message || "Network error");
+    }
+  }
+);
 
 const appointmentSlice = createSlice({
   name: "appointment",
@@ -60,6 +86,7 @@ const appointmentSlice = createSlice({
     loading: false,
     error: null,
     appointment: [],
+    appointmentDetail: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -78,6 +105,18 @@ const appointmentSlice = createSlice({
       .addCase(fetchAppointments.fulfilled, (state, action) => {
         state.loading = false;
         state.appointment = action.payload.pageData || [];
+      })
+      .addCase(getAppointmentById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAppointmentById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointmentDetail = action.payload; 
+      })
+      .addCase(getAppointmentById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
