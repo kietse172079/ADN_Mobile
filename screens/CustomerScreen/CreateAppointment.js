@@ -242,7 +242,7 @@ export default function CreateAppointment({ route, navigation }) {
       )}
       {type === "self" && (
         <Text style={styles.info}>
-          Vì tự gửi mẫu nên quý khách không cần chọn lịch hẹn, chúng tôi sẽ
+          Vì tự gửi mẫu nên quý khách có thể chọn lịch hẹn hoặc không, chúng tôi sẽ
           thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ ngày
           nhận mẫu.
         </Text>

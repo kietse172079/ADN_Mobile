@@ -17,7 +17,8 @@ import DetailService from "../screens/CustomerScreen/DetailService";
 import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
 import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointmentschedulelist";
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
-import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment"; 
+import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
+import ViewService from "../screens/CustomerScreen/ViewService";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,12 +58,12 @@ function AuthStack() {
 
 // HomeStack cho tab Trang chủ
 const HomeStackNav = createStackNavigator();
-function HomeStack() {
+function ServiceStack() {
   return (
     <HomeStackNav.Navigator>
       <HomeStackNav.Screen
-        name="Home"
-        component={HomeScreen}
+        name="ViewService"
+        component={ViewService}
         options={{ headerShown: false }}
       />
       <HomeStackNav.Screen
@@ -75,11 +76,11 @@ function HomeStack() {
         component={CreateAppointment}
         options={{ title: "Đặt lịch hẹn" }}
       />
-      <HomeStackNav.Screen
+      {/* <HomeStackNav.Screen
         name="AppointmentDetail"
         component={AppointmentDetail}
         options={{ title: "Chi tiết lịch hẹn" }}
-      />
+      /> */}
     </HomeStackNav.Navigator>
   );
 }
@@ -133,12 +134,12 @@ function AppTabs() {
     >
       <Tab.Screen
         name="Trang chủ"
-        component={HomeStack}
+        component={HomeScreen}
         options={{ headerShown: false }}
       />
       <Tab.Screen
         name="Dịch vụ"
-        component={HomeScreen}
+        component={ServiceStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen
@@ -181,7 +182,7 @@ export default function Navigator() {
           dispatch(logout());
         }
       } catch (err) {
-        console.error("Login check error:", err);
+        // console.error("Login check error:", err);
         dispatch(logout());
       } finally {
         setLoading(false);

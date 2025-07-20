@@ -184,7 +184,7 @@ const ModalApplyKit = ({ visible, onClose, appointmentId, onSubmit }) => {
       } else if (res.data?.message === "No available kits found") {
         Alert.alert(
           "Lỗi",
-          "Không còn bộ dụng cụ phù hợp để cấp phát. Vui lòng liên hệ quản trị viên hoặc thử lại sau."
+          "Không còn bộ dụng cụ phù hợp để cấp phát. Vui lòng liên hệ quản trị viên hotline:  0869872830 hoặc thử lại sau."
         );
       } else {
         Alert.alert(
