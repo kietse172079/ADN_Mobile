@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Alert,
-  Linking,
-  ScrollView,
-} from "react-native";
+import { View, Text, Image, StyleSheet, Alert, ScrollView } from "react-native";
 import { Button, RadioButton, ActivityIndicator } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import useSample from "../../hooks/useSample";
 import usePayment from "../../hooks/usePayment";
 import { useAppointment } from "../../hooks/useAppointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { WebView } from "react-native-webview";
 
 const PaymentScreen = () => {
   const route = useRoute();
@@ -27,7 +19,8 @@ const PaymentScreen = () => {
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [method, setMethod] = useState("cash");
- 
+  const [showWebView, setShowWebView] = useState(false);
+  const [paymentUrl, setPaymentUrl] = useState("");
 
   const translateStatus = (status) => {
     switch (status?.toLowerCase()) {
@@ -102,23 +95,9 @@ const PaymentScreen = () => {
         if (paymentNo) {
           await AsyncStorage.setItem("payment_no", paymentNo);
         }
-
-        const canOpen = await Linking.canOpenURL(url);
-        console.log("🔹 Linking.canOpenURL:", canOpen);
-        if (!canOpen) {
-          Alert.alert(
-            "Không thể mở trình duyệt",
-            "Thiết bị không hỗ trợ mở URL."
-          );
-          return;
-        }
-
-        try {
-          await Linking.openURL(url);
-        } catch (err) {
-          console.error("❌ Lỗi mở URL:", err);
-          Alert.alert("Error", "Không thể mở link thanh toán!");
-        }
+        // Hiển thị WebView thay vì mở trình duyệt
+        setPaymentUrl(url);
+        setShowWebView(true);
       } else {
         Alert.alert("Success", "Thanh toán tiền mặt thành công!");
         navigation.goBack();
@@ -150,84 +129,98 @@ const PaymentScreen = () => {
 
         {/* Appointment Info */}
         <View style={styles.section}>
-          <View style={styles.grid}>
-            <View style={styles.imageContainer}>
-              {appointment?.service_id?.image_url && (
-                <Image
-                  source={{ uri: appointment.service_id.image_url }}
-                  style={styles.serviceImage}
-                  resizeMode="cover"
-                />
-              )}
-              <Text style={styles.serviceName}>
-                {appointment?.service_id?.name}
-              </Text>
-            </View>
+          {/* Service Info */}
+          <View style={styles.card}>
+            <Image
+              source={{ uri: appointment?.service_id?.image_url }}
+              style={styles.serviceImageLarge}
+              resizeMode="cover"
+            />
+            <Text style={styles.serviceTitle}>
+              {appointment?.service_id?.name}
+            </Text>
+          </View>
 
-            <View style={styles.details}>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Mã lịch hẹn: </Text>
-                <Text style={styles.mono}>{appointment?._id}</Text>
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Địa chỉ lấy mẫu: </Text>
-                {appointment?.collection_address}
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Ngày hẹn: </Text>
-                {appointment?.appointment_date
-                  ? new Date(appointment.appointment_date).toLocaleString()
-                  : "--"}
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Khung giờ: </Text>
-                {getSlotTime(appointment?.slot_id)}
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Nhân viên: </Text>
-                {appointment?.staff_id?.last_name}{" "}
-                {appointment?.staff_id?.first_name}
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Kỹ thuật viên: </Text>
-                {appointment?.laboratory_technician_id?.last_name}{" "}
-                {appointment?.laboratory_technician_id?.first_name}
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Trạng thái: </Text>
-                <Text style={styles.bold}>
-                  {translateStatus(appointment?.status)}
-                </Text>
-              </Text>
-              <Text style={styles.detailItem}>
-                <Text style={styles.label}>Thanh toán: </Text>
-                <Text style={styles.bold}>
-                  {appointment?.payment_status === "paid"
-                    ? "Đã thanh toán"
-                    : "Chưa thanh toán"}
-                </Text>
-              </Text>
-            </View>
-
-            <View style={styles.userInfo}>
+          {/* User Info */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Thông tin người đặt</Text>
+            <View style={styles.row}>
               {appointment?.user_id?.avatar && (
                 <Image
                   source={{ uri: appointment.user_id.avatar }}
-                  style={styles.avatar}
-                  resizeMode="cover"
+                  style={styles.avatarLarge}
                 />
               )}
-              <Text style={styles.userName}>
-                {appointment?.user_id?.last_name}{" "}
-                {appointment?.user_id?.first_name}
-              </Text>
-              <Text style={styles.userDetail}>
-                Email: {appointment?.user_id?.email}
-              </Text>
-              <Text style={styles.userDetail}>
-                SĐT: {appointment?.user_id?.phone_number}
-              </Text>
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={styles.boldText}>
+                  Tên:
+                  {appointment?.user_id?.last_name}{" "}
+                  {appointment?.user_id?.first_name}
+                </Text>
+                <Text>Email: {appointment?.user_id?.email}</Text>
+                <Text>SĐT: {appointment?.user_id?.phone_number}</Text>
+              </View>
             </View>
+          </View>
+
+          {/* Appointment Detail */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Thông tin lịch hẹn</Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Mã lịch hẹn: </Text>
+              <Text style={styles.mono}>{appointment?._id}</Text>
+            </Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Địa chỉ lấy mẫu: </Text>
+              {appointment?.collection_address}
+            </Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Ngày hẹn: </Text>
+              {appointment?.appointment_date
+                ? new Date(appointment.appointment_date).toLocaleString()
+                : "--"}
+            </Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Khung giờ: </Text>
+              {appointment?.slot_id?.time_slots?.length > 0
+                ? getSlotTime(appointment?.slot_id)
+                : "Chưa đăng ký"}
+            </Text>
+
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Nhân viên: </Text>
+              {appointment?.staff_id?.first_name ||
+              appointment?.staff_id?.last_name
+                ? `${appointment?.staff_id?.last_name || ""} ${appointment?.staff_id?.first_name || ""}`
+                : "Chưa đăng ký"}
+            </Text>
+
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Kỹ thuật viên: </Text>
+              {appointment?.laboratory_technician_id?.first_name ||
+              appointment?.laboratory_technician_id?.last_name
+                ? `${appointment?.laboratory_technician_id?.last_name || ""} ${appointment?.laboratory_technician_id?.first_name || ""}`
+                : "Chưa đăng ký"}
+            </Text>
+          </View>
+
+          {/* Status */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Trạng thái</Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Lịch hẹn: </Text>
+              <Text style={styles.statusText}>
+                {translateStatus(appointment?.status)}
+              </Text>
+            </Text>
+            <Text style={styles.detailItem}>
+              <Text style={styles.label}>Thanh toán: </Text>
+              <Text style={styles.statusText}>
+                {appointment?.payment_status === "paid"
+                  ? "Đã thanh toán"
+                  : "Chưa thanh toán"}
+              </Text>
+            </Text>
           </View>
         </View>
 
@@ -317,16 +310,33 @@ const PaymentScreen = () => {
               <Text style={styles.radioLabel}>🌐 PAY_OS</Text>
             </View>
           </RadioButton.Group>
-          <Button
-            mode="contained"
-            onPress={handlePayment}
-            loading={paying}
-            disabled={paying}
-            style={styles.payButton}
-            labelStyle={styles.payButtonLabel}
-          >
-            {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
-          </Button>
+
+          {showWebView ? (
+            <WebView
+              source={{ uri: paymentUrl }}
+              style={{ flex: 1, height: 900 }}
+              onNavigationStateChange={(navState) => {
+                if (navState.url.includes("success")) {
+                  setShowWebView(false);
+                  navigation.navigate("PayOSReturnScreen");
+                } else if (navState.url.includes("cancel")) {
+                  setShowWebView(false);
+                  Alert.alert("Cancelled", "Thanh toán đã bị hủy.");
+                }
+              }}
+            />
+          ) : (
+            <Button
+              mode="contained"
+              onPress={handlePayment}
+              loading={paying}
+              disabled={paying}
+              style={styles.payButton}
+              labelStyle={styles.payButtonLabel}
+            >
+              {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
+            </Button>
+          )}
 
           {error && (
             <Text style={styles.errorText}>
@@ -430,6 +440,52 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
   },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 3,
+  },
+
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+
+  serviceImageLarge: {
+    width: "100%",
+    height: 180,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+
+  serviceTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#00a9a4",
+  },
+
+  avatarLarge: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  statusText: {
+    fontWeight: "bold",
+    color: "#00a9a4",
+  },
+
   sampleHeader: {
     flexDirection: "row",
     alignItems: "center",

@@ -20,6 +20,7 @@ import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
 import ViewService from "../screens/CustomerScreen/ViewService";
 import PaymentScreen from "../screens/CustomerScreen/PaymentScreen";
+import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -110,6 +111,11 @@ function AppointmentStack() {
         name="PaymentScreen"
         component={PaymentScreen}
         options={{ title: "Thanh toán" }}
+      />
+      <AppointmentStackNav.Screen
+        name="PayOSReturnScreen"
+        component={PayOSReturnScreen}
+        options={{ title: "Kết quả thanh toán" }}
       />
     </AppointmentStackNav.Navigator>
   );
