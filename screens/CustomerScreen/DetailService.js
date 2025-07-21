@@ -70,11 +70,19 @@ export default function DetailService({ route, navigation }) {
       {/* Nút đặt lịch hoặc liên hệ */}
       <TouchableOpacity
         style={styles.bookButton}
-        onPress={() =>
-          navigation.navigate("CreateAppointmentCivil", {
-            serviceId: selectedService._id,
-          })
-        }
+        onPress={() => {
+          if (selectedService.type === "civil") {
+            navigation.navigate("CreateAppointmentCivil", {
+              serviceId: selectedService._id,
+            });
+          } else if (selectedService.type === "administrative") {
+            navigation.navigate("CreateAppointmentAdministrative", {
+              serviceId: selectedService._id,
+            });
+          } else {
+            Alert.alert("Lỗi", "Loại dịch vụ không hợp lệ!");
+          }
+        }}
       >
         <Text style={styles.bookButtonText}>Đặt lịch ngay</Text>
       </TouchableOpacity>

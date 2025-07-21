@@ -21,6 +21,7 @@ import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointme
 import ViewService from "../screens/CustomerScreen/ViewService";
 import PaymentScreen from "../screens/CustomerScreen/PaymentScreen";
 import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
+import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,32 +59,32 @@ function AuthStack() {
   );
 }
 
-// HomeStack cho tab Trang chủ
-const HomeStackNav = createStackNavigator();
+// ServiceStack cho tab Dịch vụ
+const ServiceStackNav = createStackNavigator();
 function ServiceStack() {
   return (
-    <HomeStackNav.Navigator>
-      <HomeStackNav.Screen
+    <ServiceStackNav.Navigator>
+      <ServiceStackNav.Screen
         name="ViewService"
         component={ViewService}
         options={{ headerShown: false }}
       />
-      <HomeStackNav.Screen
+      <ServiceStackNav.Screen
         name="DetailService"
         component={DetailService}
         options={{ title: "Chi tiết dịch vụ" }}
       />
-      <HomeStackNav.Screen
+      <ServiceStackNav.Screen
         name="CreateAppointmentCivil"
         component={CreateAppointmentCivil}
         options={{ title: "Đặt lịch hẹn" }}
       />
-      {/* <HomeStackNav.Screen
-        name="AppointmentDetail"
-        component={AppointmentDetail}
-        options={{ title: "Chi tiết lịch hẹn" }}
-      /> */}
-    </HomeStackNav.Navigator>
+      <ServiceStackNav.Screen
+        name="CreateAppointmentAdministrative"
+        component={CreateAppointmentAdministrative}
+        options={{ title: "Đặt lịch hẹn" }}
+      />
+    </ServiceStackNav.Navigator>
   );
 }
 
