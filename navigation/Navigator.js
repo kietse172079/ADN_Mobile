@@ -14,7 +14,7 @@ import { login, logout } from "../feartures/user/authSlice";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
 import DetailService from "../screens/CustomerScreen/DetailService";
-import CreateAppointment from "../screens/CustomerScreen/CreateAppointment";
+import CreateAppointmentCivil from "../screens/CustomerScreen/CreateAppointmentCivil";
 import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointmentschedulelist";
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
@@ -74,8 +74,8 @@ function ServiceStack() {
         options={{ title: "Chi tiết dịch vụ" }}
       />
       <HomeStackNav.Screen
-        name="CreateAppointment"
-        component={CreateAppointment}
+        name="CreateAppointmentCivil"
+        component={CreateAppointmentCivil}
         options={{ title: "Đặt lịch hẹn" }}
       />
       {/* <HomeStackNav.Screen

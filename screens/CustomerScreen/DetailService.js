@@ -71,7 +71,7 @@ export default function DetailService({ route, navigation }) {
       <TouchableOpacity
         style={styles.bookButton}
         onPress={() =>
-          navigation.navigate("CreateAppointment", {
+          navigation.navigate("CreateAppointmentCivil", {
             serviceId: selectedService._id,
           })
         }

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, StyleSheet, Alert, Button } from "react-native";
 import { loginUser, loginWithGoogle } from "../../services/apiAuth";
 import { useDispatch } from "react-redux";
-import { login } from "../../feartures/user/authSlice"; 
+import { login } from "../../feartures/user/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme } from "../../theme/theme";
 import { CustomButton } from "../../components/Button";
@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }) {
         dispatch(login({ token })); // Dispatch chỉ token vì user không có
         Alert.alert(
           "Đăng nhập thành công!",
-          `Chào mừng người dùng`
+          `Chào mừng đến với Bloodline DNA testing`
         );
         navigation.navigate("Home"); // Điều hướng sau khi đăng nhập thành công
       } else {

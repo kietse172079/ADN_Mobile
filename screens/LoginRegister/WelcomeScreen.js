@@ -29,13 +29,13 @@ export default function WelcomeScreen({ navigation }) {
           type="primary"
         />
       </View>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <CustomButton
           title="Vào trang Home"
           onPress={handleGoToHome}
           type="primary"
         />
-      </View>
+      </View> */}
     </View>
   );
 }

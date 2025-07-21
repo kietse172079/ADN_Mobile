@@ -15,7 +15,7 @@ import { useAppointment } from "../../hooks/useAppointment";
 import { useSlot } from "../../hooks/useSlot";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function CreateAppointment({ route, navigation }) {
+export default function CreateAppointmentCivil({ route, navigation }) {
   const { serviceId } = route.params;
   const [type, setType] = useState("self");
   const [collectionAddress, setCollectionAddress] = useState("");
@@ -52,7 +52,7 @@ export default function CreateAppointment({ route, navigation }) {
   }, [startDate]);
 
   useEffect(() => {
-    if (type === "self") return; // Không cần lấy slot nếu tự lấy mẫu
+    // if (type === "self") return; // Không cần lấy slot nếu tự lấy mẫu
     setIsLoadingSlots(true);
     const slotType = type === "" ? undefined : `${type}_collected`;
     getAvailableSlots({
@@ -104,9 +104,9 @@ export default function CreateAppointment({ route, navigation }) {
     };
     // console.log("Sending payload:", payload);
     // console.log("Using token:", token);
-    if (type !== "self") payload.slot_id = selectedSlot.id;
+    // if (type !== "self") payload.slot_id = selectedSlot.id;
+    if (selectedSlot?.id) payload.slot_id = selectedSlot.id;
     if (type === "home") payload.collection_address = collectionAddress;
-
     try {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
@@ -205,28 +205,31 @@ export default function CreateAppointment({ route, navigation }) {
             const isDisabled = type === "self";
             return (
               <TouchableOpacity
-                style={[
-                  styles.slotItem,
-                  isSelected && !isDisabled && styles.slotItemSelected,
-                  isDisabled && { opacity: 0.5 },
-                ]}
-                onPress={() => {
-                  if (!isDisabled) handleSlotPress(item);
-                }}
-                activeOpacity={isDisabled ? 1 : 0.7}
-                disabled={isDisabled}
+                // style={[
+                //   styles.slotItem,
+                //   isSelected && !isDisabled && styles.slotItemSelected,
+                //   isDisabled && { opacity: 0.5 },
+                // ]}
+                // onPress={() => {
+                //   if (!isDisabled) handleSlotPress(item);
+                // }}
+                // activeOpacity={isDisabled ? 1 : 0.7}
+                // disabled={isDisabled}
+                style={[styles.slotItem, isSelected && styles.slotItemSelected]}
+                onPress={() => handleSlotPress(item)}
+                activeOpacity={0.7}
               >
                 <Text style={styles.slotText}>
                   {new Date(item.start_time).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                   -{" "}
+                  -{" "}
                   {new Date(item.end_time).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                   , ngày {new Date(item.start_time).toLocaleDateString()}
+                  , ngày {new Date(item.start_time).toLocaleDateString()}
                 </Text>
                 <Text style={styles.slotStaff}>
                   Nhân viên: {item.staff?.user_id?.first_name || "N/A"}
@@ -242,9 +245,9 @@ export default function CreateAppointment({ route, navigation }) {
       )}
       {type === "self" && (
         <Text style={styles.info}>
-          Vì tự gửi mẫu nên quý khách có thể chọn lịch hẹn hoặc không, chúng tôi sẽ
-          thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ ngày
-          nhận mẫu.
+          Vì tự gửi mẫu nên quý khách có thể chọn lịch hẹn hoặc không, chúng tôi
+          sẽ thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ
+          ngày nhận mẫu.
         </Text>
       )}
 
