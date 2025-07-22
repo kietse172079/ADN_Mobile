@@ -232,16 +232,21 @@ export default function AppointmentDetail({ route }) {
 
         {/* Nút hành động */}
         <View style={styles.buttonContainer}>
-          <Button
-            mode="contained"
-            onPress={() => setModalVisible(true)}
-            loading={loading}
-            disabled={loading || appointment.status === "completed"}
-            style={[styles.button, { backgroundColor: "#00a9a4" }]}
-            labelStyle={{ color: "#fff", fontWeight: "bold" }}
-          >
-            Nhận bộ dụng cụ
-          </Button>
+          {["self", "home"].includes(
+            (appointment.type || "").toLowerCase()
+          ) && (
+            <Button
+              mode="contained"
+              onPress={() => setModalVisible(true)}
+              loading={loading}
+              disabled={loading || appointment.status === "completed"}
+              style={[styles.button, { backgroundColor: "#00a9a4" }]}
+              labelStyle={{ color: "#fff", fontWeight: "bold" }}
+            >
+              Nhận bộ dụng cụ
+            </Button>
+          )}
+
           <Button
             mode="outlined"
             onPress={handleViewSamples}

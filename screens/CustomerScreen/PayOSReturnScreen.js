@@ -19,13 +19,16 @@ const PayOSReturnScreen = () => {
   const { verifyPaymentStatus, isVerifying } = usePayment();
 
   useEffect(() => {
+    let isMounted = true;
+    let timerId = null;
+
     const verify = async () => {
       try {
         const paymentNo = await AsyncStorage.getItem("payment_no");
 
         if (!paymentNo) {
           Alert.alert("Lỗi", "Không tìm thấy mã thanh toán.");
-          navigation.replace("HomeScreen");
+          if (isMounted) navigation.navigate("Trang chủ");
           return;
         }
 
@@ -33,33 +36,36 @@ const PayOSReturnScreen = () => {
 
         if (result.success) {
           await AsyncStorage.removeItem("payment_no");
-          setIsVerified(true);
+          if (isMounted) setIsVerified(true);
 
-          const timerId = setInterval(() => {
+          timerId = setInterval(() => {
             setCountdown((c) => {
               if (c <= 1) {
                 clearInterval(timerId);
-                navigation.replace("HomeScreen");
+                if (isMounted) navigation.navigate("Trang chủ");
               }
               return c - 1;
             });
           }, 1000);
-
-          return () => clearInterval(timerId);
         } else {
           Alert.alert(
             "Lỗi xác minh",
             result.error?.message || "Không xác định"
           );
-          navigation.replace("HomeScreen");
+          if (isMounted) navigation.navigate("Trang chủ");
         }
       } catch (err) {
         Alert.alert("Lỗi", "Xác minh thanh toán thất bại.");
-        navigation.replace("HomeScreen");
+        if (isMounted) navigation.navigate("Trang chủ");
       }
     };
 
     verify();
+
+    return () => {
+      isMounted = false;
+      if (timerId) clearInterval(timerId);
+    };
   }, []);
 
   if (isVerifying) {
@@ -79,7 +85,7 @@ const PayOSReturnScreen = () => {
       </Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.replace("HomeScreen")}
+        onPress={() => navigation.navigate("Trang chủ")}
       >
         <Text style={styles.buttonText}>Về ngay</Text>
       </TouchableOpacity>

@@ -1,16 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import API from "../../services/apiConfig"; 
+import API from "../../services/apiConfig";
 
 // Async thunk to create a payment intent
 export const createPaymentIntent = createAsyncThunk(
   "payment/createPaymentIntent",
-  async ({ appointment_id, payment_method, sample_ids }, { rejectWithValue }) => {
+  async (
+    { appointment_id, payment_method, sample_ids },
+    { rejectWithValue }
+  ) => {
     try {
       const token = await AsyncStorage.getItem("accessToken");
       const response = await axios.post(
-        API.CREATE_PAYMENT_INTENT, 
+        API.CREATE_PAYMENT_INTENT,
         { appointment_id, payment_method, sample_ids },
         {
           headers: {
@@ -33,7 +36,7 @@ export const verifyPayment = createAsyncThunk(
     try {
       const token = await AsyncStorage.getItem("accessToken");
       const response = await axios.get(
-        `${API.VERIFY_PAYMENT}/${paymentNo}`, 
+        `${API.VERIFY_PAYMENT}/${paymentNo}/verify`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
