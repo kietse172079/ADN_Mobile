@@ -19,9 +19,10 @@ import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointme
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
 import ViewService from "../screens/CustomerScreen/ViewService";
-import PaymentScreen from "../screens/CustomerScreen/PaymentScreen";
+import PaymentSampleScreen from "../screens/CustomerScreen/PaymentSampleScreen";
 import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
 import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
+import PaymentDepositAppointment from "../screens/CustomerScreen/PaymentDepositAppointment";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -84,6 +85,11 @@ function ServiceStack() {
         component={CreateAppointmentAdministrative}
         options={{ title: "Đặt lịch hẹn" }}
       />
+      <ServiceStackNav.Screen
+        name="PaymentDepositAppointment"
+        component={PaymentDepositAppointment}
+        options={{ title: "Thanh toán đặt lịch" }}
+      />
     </ServiceStackNav.Navigator>
   );
 }
@@ -109,8 +115,8 @@ function AppointmentStack() {
         options={{ title: "Danh sách mẫu" }}
       />
       <AppointmentStackNav.Screen
-        name="PaymentScreen"
-        component={PaymentScreen}
+        name="PaymentSampleScreen"
+        component={PaymentSampleScreen}
         options={{ title: "Thanh toán" }}
       />
       <AppointmentStackNav.Screen

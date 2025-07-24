@@ -4,17 +4,39 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../services/apiConfig";
 
 // Async thunk to create a payment intent
+// export const createPaymentIntent = createAsyncThunk(
+//   "payment/createPaymentIntent",
+//   async (
+//     { appointment_id, payment_method, sample_ids },
+//     { rejectWithValue }
+//   ) => {
+//     try {
+//       const token = await AsyncStorage.getItem("accessToken");
+//       const response = await axios.post(
+//         API.CREATE_PAYMENT_INTENT,
+//         { appointment_id, payment_method, sample_ids },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
 export const createPaymentIntent = createAsyncThunk(
   "payment/createPaymentIntent",
-  async (
-    { appointment_id, payment_method, sample_ids },
-    { rejectWithValue }
-  ) => {
+  async ({ appointment_id, payment_method }, { rejectWithValue }) => {
     try {
       const token = await AsyncStorage.getItem("accessToken");
       const response = await axios.post(
         API.CREATE_PAYMENT_INTENT,
-        { appointment_id, payment_method, sample_ids },
+        { appointment_id, payment_method },
         {
           headers: {
             Authorization: `Bearer ${token}`,

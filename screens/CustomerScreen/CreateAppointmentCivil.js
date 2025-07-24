@@ -111,8 +111,11 @@ export default function CreateAppointmentCivil({ route, navigation }) {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
       if (result) {
-        Alert.alert("Đặt lịch thành công!");
-        navigation.goBack();
+        // Alert.alert("Đặt lịch thành công!");
+        // navigation.goBack();
+        navigation.navigate("PaymentDepositAppointment", {
+          appointmentId: result._id,
+        });
       } else {
         Alert.alert("Đặt lịch thất bại!", "Không nhận được phản hồi từ server");
       }

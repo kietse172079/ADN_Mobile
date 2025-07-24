@@ -10,11 +10,25 @@ const usePayment = () => {
   const { paymentIntent, verificationResult, isLoading, isVerifying, error } =
     useSelector((state) => state.payment);
 
+  // const makePayment = useCallback(
+  //   async ({ appointment_id, payment_method, sample_ids }) => {
+  //     try {
+  //       const res = await dispatch(
+  //         createPaymentIntent({ appointment_id, payment_method, sample_ids })
+  //       ).unwrap();
+  //       return { success: true, data: res };
+  //     } catch (err) {
+  //       return { success: false, error: err };
+  //     }
+  //   },
+  //   [dispatch]
+  // );
+
   const makePayment = useCallback(
-    async ({ appointment_id, payment_method, sample_ids }) => {
+    async ({ appointment_id, payment_method }) => {
       try {
         const res = await dispatch(
-          createPaymentIntent({ appointment_id, payment_method, sample_ids })
+          createPaymentIntent({ appointment_id, payment_method })
         ).unwrap();
         return { success: true, data: res };
       } catch (err) {

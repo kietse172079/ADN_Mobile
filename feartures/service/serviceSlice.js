@@ -111,8 +111,15 @@ const serviceSlice = createSlice({
       })
       .addCase(fetchServices.fulfilled, (state, action) => {
         state.loading = false;
-        state.services = action.payload;
-        // state.total = action.payload.pageInfo.totalItems;
+
+        // Lọc bỏ các service không có parent_service_id (null/undefined)
+        const filteredServices = action.payload.filter(
+          (item) =>
+            item.parent_service_id !== null &&
+            item.parent_service_id !== undefined
+        );
+
+        state.services = filteredServices;
       })
       .addCase(fetchServices.rejected, (state, action) => {
         state.loading = false;

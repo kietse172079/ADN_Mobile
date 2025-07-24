@@ -8,7 +8,7 @@ import { useAppointment } from "../../hooks/useAppointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 
-const PaymentScreen = () => {
+const PaymentSampleScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { appointmentId, sampleIds } = route.params || {};
@@ -565,4 +565,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentScreen;
+export default PaymentSampleScreen;

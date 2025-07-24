@@ -8,15 +8,15 @@ import {
   FlatList,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServices } from "../../feartures/service/serviceSlice";
+import { useService } from "../../hooks/useService";
 import { theme } from "../../theme/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function HomeScreen({ navigation }) {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
-  const { services, loading, error } = useSelector((state) => state.service);
-  const [selectedType, setSelectedType] = useState("civil");
+  const { services, loading, getServices } = useService();
+  const [selectedType, setSelectedType] = useState("");
 
   // Lọc dịch vụ theo loại đã chọn
   const filteredServices = selectedType
@@ -24,21 +24,20 @@ export default function HomeScreen({ navigation }) {
     : services;
 
   useEffect(() => {
-    dispatch(
-      fetchServices({
-        pageNum: 1,
-        pageSize: 10,
-        is_active: true,
-        sort_by: "created_at",
-        sort_order: "desc",
-      })
-    );
-  }, [dispatch]);
+    getServices({
+      pageNum: 1,
+      pageSize: 10,
+      is_active: true,
+      sort_by: "created_at",
+      sort_order: "desc",
+      has_parent: true,
+    });
+  }, [getServices]);
 
   const mainFeatures = [
     { id: "1", title: "Lịch hẹn" },
     { id: "2", title: "Liên hệ" },
-    { id: "3", title: "Cộng đồng hỏi đáp" },
+    { id: "3", title: "Tư vấn" },
     { id: "4", title: "Cẩm nang" },
   ];
 
@@ -66,7 +65,7 @@ export default function HomeScreen({ navigation }) {
                     ? "calendar"
                     : item.title === "Liên hệ"
                       ? "call"
-                      : item.title === "Cộng đồng hỏi đáp"
+                      : item.title === "Tư vấn"
                         ? "chatbox"
                         : "medkit"
                 }
