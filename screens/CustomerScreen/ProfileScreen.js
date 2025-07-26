@@ -74,10 +74,10 @@ export default function ProfileScreen() {
         <MaterialIcons name="cake" size={20} color="#007AFF" />
         <Text style={styles.infoText}>Ngày sinh: {formattedDob}</Text>
       </View>
-      <View style={styles.infoBox}>
+      {/* <View style={styles.infoBox}>
         <MaterialIcons name="location-on" size={20} color="#007AFF" />
         <Text style={styles.infoText}>Địa chỉ: {address || "Chưa có"}</Text>
-      </View>
+      </View> */}
 
       <View style={styles.logoutContainer}>
         <CustomButton title="Logout" onPress={handleLogout} type="primary" />

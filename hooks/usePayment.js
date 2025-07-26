@@ -3,12 +3,20 @@ import { useCallback } from "react"; // Chỉ sử dụng useCallback, loại b�
 import {
   createPaymentIntent,
   verifyPayment,
+  cancelPayment,
 } from "../feartures/payment/paymentSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const usePayment = () => {
   const dispatch = useDispatch();
-  const { paymentIntent, verificationResult, isLoading, isVerifying, error } =
-    useSelector((state) => state.payment);
+  const {
+    paymentIntent,
+    verificationResult,
+    isLoading,
+    isVerifying,
+    isCancelling,
+    error,
+  } = useSelector((state) => state.payment);
 
   // const makePayment = useCallback(
   //   async ({ appointment_id, payment_method, sample_ids }) => {
@@ -50,13 +58,32 @@ const usePayment = () => {
     [dispatch]
   );
 
+  const cancelPaymentRequest = useCallback(
+    async (paymentNo) => {
+      try {
+        const token = await AsyncStorage.getItem("accessToken");
+        if (!token) {
+          throw new Error("No token found. Please log in again.");
+        }
+        console.log("Token for cancel request:", token); // Debug
+        const res = await dispatch(cancelPayment(paymentNo)).unwrap();
+        return { success: true, data: res };
+      } catch (err) {
+        return { success: false, error: err.message || err };
+      }
+    },
+    [dispatch]
+  );
+
   return {
     makePayment,
     verifyPaymentStatus,
+    cancelPaymentRequest,
     paymentIntent,
     verificationResult,
     isLoading,
     isVerifying,
+    isCancelling,
     error,
   };
 };

@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }) {
         Alert.alert("Đăng nhập thất bại", "Vui lòng kiểm tra lại thông tin");
       }
     } catch (err) {
-      console.error("Login error:", err);
+      // console.error("Login error:", err);
       Alert.alert("Đăng nhập thất bại", err.message || "Vui lòng thử lại");
     }
   };

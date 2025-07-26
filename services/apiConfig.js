@@ -29,6 +29,7 @@ const API = {
   // Payment endpoints
   CREATE_PAYMENT_INTENT: `${BASE_URL}/api/payments/appointment`,
   VERIFY_PAYMENT: `${BASE_URL}/api/payments`,
+  CANCEL_PAYMENT: `${BASE_URL}/api/payments`,
 };
 
 export default API;

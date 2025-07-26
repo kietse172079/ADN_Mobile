@@ -73,6 +73,28 @@ export const verifyPayment = createAsyncThunk(
   }
 );
 
+export const cancelPayment = createAsyncThunk(
+  "payment/cancelPayment",
+  async (paymentNo, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem("accessToken");
+      const response = await axios.post(
+        `${API.CANCEL_PAYMENT}/${paymentNo}/cancel`,
+        {}, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const paymentSlice = createSlice({
   name: "payment",
   initialState: {
@@ -80,6 +102,7 @@ export const paymentSlice = createSlice({
     verificationResult: null,
     isLoading: false,
     isVerifying: false,
+    isCancelling: false,
     error: null,
   },
   reducers: {
@@ -89,6 +112,7 @@ export const paymentSlice = createSlice({
       state.error = null;
       state.isLoading = false;
       state.isVerifying = false;
+      state.isCancelling = false;
     },
   },
   extraReducers: (builder) => {
@@ -115,6 +139,19 @@ export const paymentSlice = createSlice({
       })
       .addCase(verifyPayment.rejected, (state, action) => {
         state.isVerifying = false;
+        state.error = action.payload;
+      })
+      .addCase(cancelPayment.pending, (state) => {
+        state.isCancelling = true;
+        state.error = null;
+      })
+      .addCase(cancelPayment.fulfilled, (state, action) => {
+        state.isCancelling = false;
+        state.paymentIntent = null;
+        state.verificationResult = null;
+      })
+      .addCase(cancelPayment.rejected, (state, action) => {
+        state.isCancelling = false;
         state.error = action.payload;
       });
   },

@@ -28,7 +28,12 @@ const PayOSReturnScreen = () => {
 
         if (!paymentNo) {
           Alert.alert("Lỗi", "Không tìm thấy mã thanh toán.");
-          if (isMounted) navigation.navigate("Trang chủ");
+          if (isMounted) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Trang chủ" }],
+            });
+          }
           return;
         }
 
@@ -42,7 +47,12 @@ const PayOSReturnScreen = () => {
             setCountdown((c) => {
               if (c <= 1) {
                 clearInterval(timerId);
-                if (isMounted) navigation.navigate("Trang chủ");
+                if (isMounted) {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Trang chủ" }],
+                  });
+                }
               }
               return c - 1;
             });
@@ -85,7 +95,12 @@ const PayOSReturnScreen = () => {
       </Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Trang chủ")}
+        onPress={() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Trang chủ" }],
+          });
+        }}
       >
         <Text style={styles.buttonText}>Về ngay</Text>
       </TouchableOpacity>

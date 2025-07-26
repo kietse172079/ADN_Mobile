@@ -69,22 +69,32 @@ export default function CreateAppointmentCivil({ route, navigation }) {
   }, [startDate, endDate, type, getAvailableSlots]);
 
   const handleSubmit = async () => {
-    if (type === "self") {
-      if (!serviceId) {
-        Alert.alert("Vui lòng chọn dịch vụ!");
-        return;
-      }
-    } else if (type === "facility") {
-      if (!serviceId || !selectedSlot) {
-        Alert.alert("Vui lòng chọn dịch vụ và slot!");
-        return;
-      }
-    } else if (type === "home") {
-      if (!serviceId || !selectedSlot || !collectionAddress) {
-        Alert.alert("Vui lòng nhập đầy đủ thông tin và chọn slot!");
-        return;
-      }
+    // if (type === "self") {
+    //   if (!serviceId) {
+    //     Alert.alert("Vui lòng chọn dịch vụ!");
+    //     return;
+    //   }
+    // } else if (type === "facility") {
+    //   if (!serviceId || !selectedSlot) {
+    //     Alert.alert("Vui lòng chọn dịch vụ và slot!");
+    //     return;
+    //   }
+    // } else if (type === "home") {
+    //   if (!serviceId || !selectedSlot || !collectionAddress) {
+    //     Alert.alert("Vui lòng nhập đầy đủ thông tin và chọn slot!");
+    //     return;
+    //   }
+    // }
+    if (!serviceId || !selectedSlot) {
+      Alert.alert("Vui lòng chọn dịch vụ và slot!");
+      return;
     }
+
+    if (type === "home" && !collectionAddress) {
+      Alert.alert("Vui lòng nhập địa chỉ lấy mẫu!");
+      return;
+    }
+
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -121,10 +131,11 @@ export default function CreateAppointmentCivil({ route, navigation }) {
       }
     } catch (error) {
       console.log("Error during booking:", error);
-      Alert.alert(
-        "Đặt lịch thất bại!",
-        error.message || "Có lỗi không xác định"
-      );
+      
+      // Alert.alert(
+      //   "Đặt lịch thất bại!",
+      //   error.message || "Có lỗi không xác định"
+      // );
     } finally {
       setIsSubmitting(false);
     }
@@ -251,13 +262,13 @@ export default function CreateAppointmentCivil({ route, navigation }) {
           style={{ maxHeight: 200, marginBottom: 10 }}
         />
       )}
-      {type === "self" && (
+      {/* {type === "self" && (
         <Text style={styles.info}>
           Vì tự gửi mẫu nên quý khách có thể chọn lịch hẹn hoặc không, chúng tôi
           sẽ thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ
           ngày nhận mẫu.
         </Text>
-      )}
+      )} */}
 
       <TouchableOpacity
         style={[styles.submitButton, isSubmitting && { opacity: 0.6 }]}
