@@ -74,6 +74,8 @@ const paymentColor = (status) => {
       return "#1291e6ff";
     case "unpaid":
       return "#F44336";
+    case "failed":
+      return "#ec0e0eff";
     default:
       return "#9E9E9E";
   }
@@ -106,7 +108,9 @@ const PaymentBadge = ({ status }) => (
         ? "Đã thanh toán"
         : status === "unpaid"
           ? "Chưa thanh toán"
-          : status}
+          : status === "failed"
+            ? "Thanh toán thất bại"
+            : status}
     </Text>
   </View>
 );

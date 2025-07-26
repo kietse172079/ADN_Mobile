@@ -23,6 +23,7 @@ import PaymentSampleScreen from "../screens/CustomerScreen/PaymentSampleScreen";
 import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
 import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
 import PaymentDepositAppointment from "../screens/CustomerScreen/PaymentDepositAppointment";
+import BlogDetail from "../screens/CustomerScreen/BlogDetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,12 +52,30 @@ function AuthStack() {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="DetailService"
         component={DetailService}
         options={{ title: "Chi tiết dịch vụ" }}
-      />
+      /> */}
     </Stack.Navigator>
+  );
+}
+// HomeStack cho tab Trang chủ
+const HomeStackNav = createStackNavigator();
+function HomeStack() {
+  return (
+    <HomeStackNav.Navigator>
+      <HomeStackNav.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStackNav.Screen
+        name="BlogDetail"
+        component={BlogDetail}
+        options={{ title: "Chi tiết bài viết" }}
+      />
+    </HomeStackNav.Navigator>
   );
 }
 
@@ -153,7 +172,7 @@ function AppTabs() {
     >
       <Tab.Screen
         name="Trang chủ"
-        component={HomeScreen}
+        component={HomeStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen

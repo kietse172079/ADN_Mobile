@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -7,32 +7,22 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { useService } from "../../hooks/useService";
+import { useSelector } from "react-redux";
+import useBlog from "../../hooks/useBlog";
 import { theme } from "../../theme/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function HomeScreen({ navigation }) {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const dispatch = useDispatch();
-  const { services, loading, getServices } = useService();
-  const [selectedType, setSelectedType] = useState("");
-
-  // Lọc dịch vụ theo loại đã chọn
-  const filteredServices = selectedType
-    ? services.filter((item) => item.type === selectedType)
-    : services;
+  const { blogs, loading, fetchBlogs } = useBlog();
 
   useEffect(() => {
-    getServices({
+    fetchBlogs({
       pageNum: 1,
       pageSize: 10,
-      is_active: true,
-      sort_by: "created_at",
-      sort_order: "desc",
-      has_parent: true,
+      is_published: true,
     });
-  }, [getServices]);
+  }, []);
 
   const mainFeatures = [
     { id: "1", title: "Lịch hẹn" },
@@ -43,14 +33,12 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Banner quảng cáo */}
       <Image
         source={require("../../assets/DNA.jpg")}
         style={styles.banner}
         resizeMode="cover"
       />
 
-      {/* Chức năng chính */}
       <View style={styles.mainFeaturesWrapper}>
         <FlatList
           data={mainFeatures}
@@ -79,90 +67,41 @@ export default function HomeScreen({ navigation }) {
           style={styles.featuresContainer}
         />
       </View>
-      {/* Dịch vụ mới */}
-      <Text style={styles.sectionTitle}>Dịch vụ</Text>
-      <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            selectedType === "" && styles.filterButtonActive,
-          ]}
-          onPress={() => setSelectedType("")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              selectedType === "" && styles.filterTextActive,
-            ]}
-          >
-            Tất cả dịch vụ
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            selectedType === "civil" && styles.filterButtonActive,
-          ]}
-          onPress={() => setSelectedType("civil")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              selectedType === "civil" && styles.filterTextActive,
-            ]}
-          >
-            Dân sự
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            selectedType === "administrative" && styles.filterButtonActive,
-          ]}
-          onPress={() => setSelectedType("administrative")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              selectedType === "administrative" && styles.filterTextActive,
-            ]}
-          >
-            Hành chính
-          </Text>
-        </TouchableOpacity>
-      </View>
+
+      <Text style={styles.blogSectionTitle}>Bài viết mới</Text>
       <FlatList
-        data={filteredServices}
+        data={blogs}
         keyExtractor={(item) => item._id?.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.serviceCard}
+            style={styles.blogCard}
             onPress={() =>
-              navigation.navigate("DetailService", { serviceId: item._id })
+              navigation.navigate("BlogDetail", { slug: item.slug })
             }
           >
             <Image
               source={
-                item.image_url
-                  ? { uri: item.image_url }
+                item.images?.[0]?.image_url
+                  ? { uri: item.images[0].image_url }
                   : require("../../assets/DNA.jpg")
               }
-              style={styles.serviceImage}
+              style={styles.blogImage}
             />
-            <View style={styles.serviceTextContainer}>
-              <Text style={styles.serviceTitle}>{item.name}</Text>
-              {/* <Text style={styles.serviceSubtitle}>{item.description}</Text> */}
-              <Text style={styles.servicePrice}>
-                Giá: {item.price?.toLocaleString("vi-VN")}đ
+            <View style={styles.blogTextContainer}>
+              <Text style={styles.blogTitle} numberOfLines={2}>
+                {item.title}
+              </Text>
+              <Text numberOfLines={2} style={styles.blogDescription}>
+                {item.description}
               </Text>
             </View>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
           loading ? (
-            <Text>Đang tải dịch vụ...</Text>
+            <Text style={{ textAlign: "center" }}>Đang tải bài viết...</Text>
           ) : (
-            <Text>Không có dịch vụ nào</Text>
+            <Text style={{ textAlign: "center" }}>Không có bài viết nào</Text>
           )
         }
       />
@@ -192,7 +131,7 @@ const styles = StyleSheet.create({
     marginVertical: theme.spacing.medium,
   },
   featureCard: {
-    backgroundColor: "#E0F7F6", // nhẹ từ primary
+    backgroundColor: "#E0F7F6",
     paddingVertical: theme.spacing.medium,
     paddingHorizontal: theme.spacing.small,
     borderRadius: 12,
@@ -220,32 +159,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: theme.colors.text,
     marginBottom: theme.spacing.small,
-  },
-  filterContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: theme.spacing.medium,
-  },
-  filterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-    backgroundColor: "#f5f5f5",
-    marginHorizontal: 6,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  filterButtonActive: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
-  filterText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-  },
-  filterTextActive: {
-    color: "#fff",
   },
   serviceCard: {
     flexDirection: "row",
@@ -276,9 +189,48 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 4,
   },
-  servicePrice: {
-    fontSize: 14,
-    color: theme.colors.primary,
+  serviceSubtitle: {
+    fontSize: 13,
+    color: "#666",
+  },
+  blogSectionTitle: {
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#00a9a4",
+    marginVertical: 12,
+  },
+  blogCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  blogImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    marginRight: 12,
+    backgroundColor: "#eee",
+  },
+  blogTextContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  blogTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 4,
+  },
+  blogDescription: {
+    fontSize: 14,
+    color: "#666",
   },
 });

@@ -30,6 +30,10 @@ const API = {
   CREATE_PAYMENT_INTENT: `${BASE_URL}/api/payments/appointment`,
   VERIFY_PAYMENT: `${BASE_URL}/api/payments`,
   CANCEL_PAYMENT: `${BASE_URL}/api/payments`,
+
+  //Blog endpoints
+  SEARCH_BLOGS: `${BASE_URL}/api/blog/search`,
+  GET_BLOG_BY_SLUG: (slug) => `${BASE_URL}/api/blog/slug/${slug}`,
 };
 
 export default API;
