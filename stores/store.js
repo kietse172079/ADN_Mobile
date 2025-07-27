@@ -8,6 +8,7 @@ import paymentSlice from "../feartures/payment/paymentSlice";
 import blogSlice from "../feartures/blogSlice/blogSlice";
 import resultSlice from "../feartures/result/resultSlice";
 import userSlice from "../feartures/user/userSlice";
+import addressSlice from "../feartures/address/addressSlice";
 
 export const store = configureStore({
   reducer: {
@@ -21,5 +22,6 @@ export const store = configureStore({
     blog: blogSlice.reducer,
     result: resultSlice.reducer,
     user: userSlice.reducer,
+    address: addressSlice.reducer,
   },
 });

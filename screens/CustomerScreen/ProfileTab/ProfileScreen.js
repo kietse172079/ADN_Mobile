@@ -98,7 +98,7 @@ export default function ProfileScreen() {
         <Text style={styles.infoText}>
           Địa chỉ:{" "}
           {address
-            ? `${address.street || ""}, ${address.ward || ""}, ${
+            ? `${address.street || ""}${address.ward || ""}, ${
                 address.district || ""
               }, ${address.city || ""}, ${address.country || ""}`
             : "Chưa có"}
