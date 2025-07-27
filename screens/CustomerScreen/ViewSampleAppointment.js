@@ -99,7 +99,7 @@ const ViewSampleAppointment = () => {
   };
 
   const navigateToPayment = () => {
-    navigation.navigate("PaymentSampleScreen", {
+    navigation.navigate("CheckoutSampleScreen", {
       appointmentId,
       sampleIds: sampleArray.map((s) => s._id),
     });

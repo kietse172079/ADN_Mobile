@@ -123,7 +123,7 @@ export default function CreateAppointmentCivil({ route, navigation }) {
       if (result) {
         // Alert.alert("Đặt lịch thành công!");
         // navigation.goBack();
-        navigation.navigate("PaymentDepositAppointment", {
+        navigation.navigate("PayOSMethodWebViewScreen", {
           appointmentId: result._id,
         });
       } else {

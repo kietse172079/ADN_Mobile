@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import usePayment from "../../hooks/usePayment";
 
-const PaymentDepositAppointment = () => {
+const PayOSMethodWebViewScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { appointmentId } = route.params || {};
@@ -259,4 +259,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentDepositAppointment;
+export default PayOSMethodWebViewScreen;

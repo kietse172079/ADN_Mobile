@@ -19,10 +19,10 @@ import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointme
 import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
 import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
 import ViewService from "../screens/CustomerScreen/ViewService";
-import PaymentSampleScreen from "../screens/CustomerScreen/PaymentSampleScreen";
+import CheckoutSampleScreen from "../screens/CustomerScreen/CheckoutSampleScreen";
 import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
 import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
-import PaymentDepositAppointment from "../screens/CustomerScreen/PaymentDepositAppointment";
+import PayOSMethodWebViewScreen from "../screens/CustomerScreen/PayOSMethodWebViewScreen";
 import BlogDetail from "../screens/CustomerScreen/BlogDetail";
 import ViewAppointmentResultlist from "../screens/CustomerScreen/ViewAppointmentResultlist";
 
@@ -106,9 +106,14 @@ function ServiceStack() {
         options={{ title: "Đặt lịch hẹn" }}
       />
       <ServiceStackNav.Screen
-        name="PaymentDepositAppointment"
-        component={PaymentDepositAppointment}
-        options={{ title: "Thanh toán đặt lịch" }}
+        name="PayOSMethodWebViewScreen"
+        component={PayOSMethodWebViewScreen}
+        options={{ title: "Thanh toán" }}
+      />
+      <AppointmentStackNav.Screen
+        name="PayOSReturnScreen"
+        component={PayOSReturnScreen}
+        options={{ title: "Kết quả thanh toán" }}
       />
     </ServiceStackNav.Navigator>
   );
@@ -135,8 +140,13 @@ function AppointmentStack() {
         options={{ title: "Danh sách mẫu" }}
       />
       <AppointmentStackNav.Screen
-        name="PaymentSampleScreen"
-        component={PaymentSampleScreen}
+        name="CheckoutSampleScreen"
+        component={CheckoutSampleScreen}
+        options={{ title: "Chi tiết đơn hàng" }}
+      />
+      <AppointmentStackNav.Screen
+        name="PayOSMethodWebViewScreen"
+        component={PayOSMethodWebViewScreen}
         options={{ title: "Thanh toán" }}
       />
       <AppointmentStackNav.Screen

@@ -67,7 +67,7 @@ export default function DetailService({ route, navigation }) {
           {selectedService.price?.toLocaleString("vi-VN")}đ
         </Text>
       </View>
-      {/* Nút đặt lịch hoặc liên hệ */}
+      {/* Nút đặt lịch*/}
       <TouchableOpacity
         style={styles.bookButton}
         onPress={() => {
@@ -76,15 +76,20 @@ export default function DetailService({ route, navigation }) {
               serviceId: selectedService._id,
             });
           } else if (selectedService.type === "administrative") {
-            navigation.navigate("CreateAppointmentAdministrative", {
-              serviceId: selectedService._id,
-            });
+            // navigation.navigate("CreateAppointmentAdministrative", {
+            //   serviceId: selectedService._id,
+            // });
+            navigation.goBack();
           } else {
             Alert.alert("Lỗi", "Loại dịch vụ không hợp lệ!");
           }
         }}
       >
-        <Text style={styles.bookButtonText}>Đặt lịch ngay</Text>
+        <Text style={styles.bookButtonText}>
+          {selectedService.type === "administrative"
+            ? "Quay về"
+            : "Đặt lịch ngay"}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );

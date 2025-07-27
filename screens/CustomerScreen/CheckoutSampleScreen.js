@@ -8,7 +8,7 @@ import { useAppointment } from "../../hooks/useAppointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 
-const PaymentSampleScreen = () => {
+const CheckoutSampleScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { appointmentId, sampleIds } = route.params || {};
@@ -91,13 +91,14 @@ const PaymentSampleScreen = () => {
       console.log("🔸 URL thanh toán:", url);
       console.log("🔸 payment_no:", paymentNo);
 
-      if (method === "pay_os" && url) {
+      if (method === "payos" && url) {
         if (paymentNo) {
           await AsyncStorage.setItem("payment_no", paymentNo);
         }
         // Hiển thị WebView thay vì mở trình duyệt
-        setPaymentUrl(url);
-        setShowWebView(true);
+        // setPaymentUrl(url);
+        // setShowWebView(true);
+        navigation.navigate("PayOSMethodWebViewScreen", { appointmentId });
       } else {
         Alert.alert("Success", "Thanh toán tiền mặt thành công!");
         navigation.goBack();
@@ -306,12 +307,12 @@ const PaymentSampleScreen = () => {
               <Text style={styles.radioLabel}>💵 Tiền mặt</Text>
             </View>
             <View style={styles.radioRow}>
-              <RadioButton value="pay_os" color="#00a9a4" />
+              <RadioButton value="payos" color="#00a9a4" />
               <Text style={styles.radioLabel}>🌐 PAY_OS</Text>
             </View>
           </RadioButton.Group>
 
-          {showWebView ? (
+          {/* {showWebView ? (
             <WebView
               source={{ uri: paymentUrl }}
               style={{ flex: 1, height: 900 }}
@@ -325,7 +326,7 @@ const PaymentSampleScreen = () => {
                 }
               }}
             />
-          ) : (
+          ) : ( */}
             <Button
               mode="contained"
               onPress={handlePayment}
@@ -336,7 +337,7 @@ const PaymentSampleScreen = () => {
             >
               {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
             </Button>
-          )}
+          {/* )} */}
 
           {error && (
             <Text style={styles.errorText}>
@@ -565,4 +566,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentSampleScreen;
+export default CheckoutSampleScreen;
