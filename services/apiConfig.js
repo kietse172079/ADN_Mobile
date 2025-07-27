@@ -34,6 +34,11 @@ const API = {
   //Blog endpoints
   SEARCH_BLOGS: `${BASE_URL}/api/blog/search`,
   GET_BLOG_BY_SLUG: (slug) => `${BASE_URL}/api/blog/slug/${slug}`,
+
+  //Result endpoints
+  FETCH_RESULTS_BY_APPOINTMENT: (id) =>`${BASE_URL}/api/result/appointment/${id}`,
+  FETCH_RESULT_BY_ID: (id) => `${BASE_URL}/api/result/${id}`,
+  FETCH_RESULT_BY_SAMPLE: (id) => `${BASE_URL}/api/result/sample/${id}`,
 };
 
 export default API;

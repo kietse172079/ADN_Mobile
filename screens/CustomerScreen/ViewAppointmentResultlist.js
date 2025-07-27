@@ -78,7 +78,7 @@ const Tag = ({ color, children }) => (
 );
 
 /* ---------- Component ---------- */
-export default function ViewAppointmentschedulelist() {
+export default function ViewAppointmentResultlist() {
   const { loading, getAppointments } = useAppointment();
   const navigation = useNavigation();
 
@@ -92,10 +92,12 @@ export default function ViewAppointmentschedulelist() {
 
     setIsLoadingMore(true);
     try {
-      const res = await getAppointments({ pageNum: page, pageSize: PAGE_SIZE });
-      const items = (res?.data?.pageData || []).filter(
-      (item) => item.status?.toLowerCase() !== "completed"
-    );
+      const res = await getAppointments({
+        pageNum: page,
+        pageSize: PAGE_SIZE,
+        status: "completed",
+      });
+      const items = res?.data?.pageData || [];
       const totalPages = res?.data?.pageInfo?.totalPages || 1;
 
       setAppointments((prev) => {
@@ -207,7 +209,7 @@ export default function ViewAppointmentschedulelist() {
             item._id?.toString() || `index-${index}`
           }
           renderItem={renderItem}
-          ListEmptyComponent={<Text>Không có lịch hẹn nào</Text>}
+          ListEmptyComponent={<Text>Không có lịch hẹn nào hoàn thành</Text>}
           ListFooterComponent={renderFooter}
           onEndReached={() => loadAppointments(pageNum)}
           onEndReachedThreshold={0.5}

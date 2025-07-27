@@ -13,7 +13,8 @@ import { Button, Card, Checkbox } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import useSample from "../../hooks/useSample";
-import ViewSampleAppointmentDetail from "./ViewSampleAppointmentDetail";
+import ViewSampleAppointmentDetailModal from "./ViewSampleAppointmentDetailModal";
+import ModalViewTestResult from "./ModalViewTestResult";
 
 const statusColor = (status) => {
   switch (status?.toLowerCase()) {
@@ -81,6 +82,8 @@ const ViewSampleAppointment = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState(null);
+  const [resultModalVisible, setResultModalVisible] = useState(false);
+  const [currentResult, setCurrentResult] = useState(null);
 
   useEffect(() => {
     fetchSamples();
@@ -254,12 +257,12 @@ const ViewSampleAppointment = () => {
           >
             <Text style={styles.uploadText}>Tải ảnh</Text>
           </TouchableOpacity> */}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text>Trạng thái: </Text>
             <Tag color={statusColor(item.status)}>
               {translateStatus(item.status)}
             </Tag>
-          </View>
+          </View> */}
         </TouchableOpacity>
       </Card>
     );
@@ -287,17 +290,31 @@ const ViewSampleAppointment = () => {
           Thanh toán
         </Button>
       )}
+      {appointmentStatus !== "completed" && (
+        <Button
+          mode="contained"
+          onPress={handleSubmitSamples}
+          loading={isSubmitting}
+          disabled={
+            isBatchCompleted || !selectedSampleIds.length || isSubmitting
+          }
+          style={styles.submitButton}
+          labelStyle={styles.submitLabel}
+        >
+          Gửi mẫu đã chọn ({selectedSampleIds.length})
+        </Button>
+      )}
 
-      <Button
-        mode="contained"
-        onPress={handleSubmitSamples}
-        loading={isSubmitting}
-        disabled={isBatchCompleted || !selectedSampleIds.length || isSubmitting}
-        style={styles.submitButton}
-        labelStyle={styles.submitLabel}
-      >
-        Gửi mẫu đã chọn ({selectedSampleIds.length})
-      </Button>
+      {appointmentStatus === "completed" && (
+        <Button
+          mode="contained"
+          onPress={() => setResultModalVisible(true)}
+          style={styles.submitButton}
+          labelStyle={styles.submitLabel}
+        >
+          Xem kết quả xét nghiệm
+        </Button>
+      )}
 
       <Modal
         visible={modalVisible}
@@ -306,13 +323,19 @@ const ViewSampleAppointment = () => {
         transparent={true}
       >
         <View style={styles.modalContainer}>
-          <ViewSampleAppointmentDetail
+          <ViewSampleAppointmentDetailModal
             sampleId={selectedSampleId}
             onClose={() => setModalVisible(false)}
             onImageUploadSuccess={handleImageUploadSuccess}
           />
         </View>
       </Modal>
+
+      <ModalViewTestResult
+        visible={resultModalVisible}
+        onClose={() => setResultModalVisible(false)}
+        appointmentId={appointmentId}
+      />
     </View>
   );
 };

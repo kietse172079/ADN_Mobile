@@ -29,6 +29,8 @@ const statusColor = (status) => {
       return "#FA07B9";
     case "sample_assigned":
       return "#078dfaff";
+    case "testing":
+      return "#078dfaff";
     default:
       return "#00a9a4";
   }
@@ -50,6 +52,8 @@ const translateStatus = (status) => {
       return "Đã nhận mẫu";
     case "sample_assigned":
       return "Đã phân công mẫu";
+    case "testing":
+      return "đang xét nghiệm";
     default:
       return status || "Không rõ";
   }
@@ -236,14 +240,13 @@ export default function AppointmentDetail({ route }) {
 
         {/* Nút hành động */}
         <View style={styles.buttonContainer}>
-          {["self", "home"].includes(
-            (appointment.type || "").toLowerCase()
+          {!["completed", "cancelled"].includes(
+            (appointment.status || "").toLowerCase()
           ) && (
             <Button
               mode="contained"
               onPress={() => setModalVisible(true)}
               loading={loading}
-              disabled={loading || appointment.status === "completed"}
               style={[styles.button, { backgroundColor: "#00a9a4" }]}
               labelStyle={{ color: "#fff", fontWeight: "bold" }}
             >

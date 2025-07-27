@@ -14,7 +14,7 @@ import { Button, Card } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import useSample from "../../hooks/useSample";
 
-const ViewSampleAppointmentDetail = ({
+const ViewSampleAppointmentDetailModal = ({
   sampleId,
   onClose,
   onImageUploadSuccess,
@@ -398,4 +398,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewSampleAppointmentDetail;
+export default ViewSampleAppointmentDetailModal;

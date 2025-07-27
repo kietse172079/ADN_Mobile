@@ -6,6 +6,7 @@ import slotSlice from "../feartures/slot/slotSlice";
 import sampleSlice from "../feartures/sample/sampleSlice";
 import paymentSlice from "../feartures/payment/paymentSlice";
 import blogSlice from "../feartures/blogSlice/blogSlice";
+import resultSlice from "../feartures/result/resultSlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
     sample: sampleSlice.reducer,
     payment: paymentSlice.reducer,
     blog: blogSlice.reducer,
+    result: resultSlice.reducer,
   },
 });

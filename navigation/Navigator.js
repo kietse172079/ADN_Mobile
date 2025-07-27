@@ -24,6 +24,7 @@ import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
 import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
 import PaymentDepositAppointment from "../screens/CustomerScreen/PaymentDepositAppointment";
 import BlogDetail from "../screens/CustomerScreen/BlogDetail";
+import ViewAppointmentResultlist from "../screens/CustomerScreen/ViewAppointmentResultlist";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -147,6 +148,30 @@ function AppointmentStack() {
   );
 }
 
+// HomeStack cho tab Thông báo
+const AppointmentResultStackNav = createStackNavigator();
+function AppointmentResultStack() {
+  return (
+    <AppointmentResultStackNav.Navigator>
+      <AppointmentResultStackNav.Screen
+        name="ViewAppointmentResultlist"
+        component={ViewAppointmentResultlist}
+        options={{ headerShown: false }}
+      />
+      <AppointmentStackNav.Screen
+        name="AppointmentDetail"
+        component={AppointmentDetail}
+        options={{ title: "Chi tiết lịch hẹn" }}
+      />
+      <AppointmentStackNav.Screen
+        name="ViewSampleAppointment"
+        component={ViewSampleAppointment}
+        options={{ title: "Danh sách mẫu" }}
+      />
+    </AppointmentResultStackNav.Navigator>
+  );
+}
+
 // Tabs chính
 function AppTabs() {
   return (
@@ -160,7 +185,7 @@ function AppTabs() {
             iconName = focused ? "construct" : "construct-outline";
           else if (route.name === "Lịch")
             iconName = focused ? "calendar" : "calendar-outline";
-          else if (route.name === "Thông báo")
+          else if (route.name === "Kết quả")
             iconName = focused ? "notifications" : "notifications-outline";
           else if (route.name === "Tài khoản")
             iconName = focused ? "person" : "person-outline";
@@ -186,8 +211,8 @@ function AppTabs() {
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="Thông báo"
-        component={HomeScreen}
+        name="Kết quả"
+        component={AppointmentResultStack}
         options={{ headerShown: false }}
       />
       <Tab.Screen
