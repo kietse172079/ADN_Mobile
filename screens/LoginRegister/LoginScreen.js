@@ -108,13 +108,13 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
 
-      <View>
+      {/* <View>
         <Button
           title="Login with Google"
           disabled={!request}
           onPress={() => promptAsync()}
         />
-      </View>
+      </View> */}
 
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>

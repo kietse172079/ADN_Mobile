@@ -22,3 +22,30 @@ export const loginWithGoogle = async (google_id) => {
     throw error;
   }
 };
+
+export const registerUser = async (userData) => {
+  const formData = new FormData();
+  formData.append("address", JSON.stringify(userData.address));
+
+  Object.entries(userData).forEach(([key, value]) => {
+    if (key !== "address" && value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
+  try {
+    const response = await apiClient.post(API.REGISTER, formData);
+
+    // console.log("📥 Phản hồi đăng ký:", response.status, response.data);
+
+    return response; // Trả về cho component xử lý
+  } catch (error) {
+    // console.log("📛 Lỗi đăng ký:", error?.response?.data);
+    throw (
+      error?.response?.data?.Errors ||
+      error?.response?.data?.Message ||
+      error?.message ||
+      "Đăng ký thất bại"
+    );
+  }
+};
