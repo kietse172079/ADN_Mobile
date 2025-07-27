@@ -11,22 +11,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useAppointment } from "../../hooks/useAppointment";
-import { useSlot } from "../../hooks/useSlot";
+import { useAppointment } from "../../../hooks/useAppointment";
+import { useSlot } from "../../../hooks/useSlot";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function CreateAppointmentAdministrative({ route, navigation }) {
+export default function CreateAppointmentCivil({ route, navigation }) {
   const { serviceId } = route.params;
-  const [type, setType] = useState("facility");
+  const [type, setType] = useState("self");
+  const [collectionAddress, setCollectionAddress] = useState("");
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [caseNumber, setCaseNumber] = useState("");
-  const [authorizationCode, setAuthorizationCode] = useState("");
 
   const {
     loading: loadingAppointment,
@@ -52,8 +52,9 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
   }, [startDate]);
 
   useEffect(() => {
+    // if (type === "self") return; // Không cần lấy slot nếu tự lấy mẫu
     setIsLoadingSlots(true);
-    const slotType = `${type}_collected`;
+    const slotType = type === "" ? undefined : `${type}_collected`;
     getAvailableSlots({
       start_date: startDate,
       end_date: endDate,
@@ -61,16 +62,39 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
     })
       .then(() => {
         // console.log("Slots fetched:", slots);
+        // console.log("Slots fetched slotid:", slots.id);
       })
       .catch((err) => console.log("Error fetching slots:", err))
       .finally(() => setIsLoadingSlots(false));
   }, [startDate, endDate, type, getAvailableSlots]);
 
   const handleSubmit = async () => {
-    if (!serviceId || !selectedSlot || !caseNumber || !authorizationCode) {
-      Alert.alert("Vui lòng nhập đầy đủ thông tin!");
+    // if (type === "self") {
+    //   if (!serviceId) {
+    //     Alert.alert("Vui lòng chọn dịch vụ!");
+    //     return;
+    //   }
+    // } else if (type === "facility") {
+    //   if (!serviceId || !selectedSlot) {
+    //     Alert.alert("Vui lòng chọn dịch vụ và slot!");
+    //     return;
+    //   }
+    // } else if (type === "home") {
+    //   if (!serviceId || !selectedSlot || !collectionAddress) {
+    //     Alert.alert("Vui lòng nhập đầy đủ thông tin và chọn slot!");
+    //     return;
+    //   }
+    // }
+    if (!serviceId || !selectedSlot) {
+      Alert.alert("Vui lòng chọn dịch vụ và slot!");
       return;
     }
+
+    if (type === "home" && !collectionAddress) {
+      Alert.alert("Vui lòng nhập địa chỉ lấy mẫu!");
+      return;
+    }
+
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -86,28 +110,32 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
 
     const payload = {
       service_id: serviceId,
-      type: type,
-      slot_id: selectedSlot.id,
-      case_number: caseNumber,
-      authorization_code: authorizationCode,
+      type: type || "self",
     };
-
-    console.log("Sending payload:", payload);
+    // console.log("Sending payload:", payload);
+    // console.log("Using token:", token);
+    // if (type !== "self") payload.slot_id = selectedSlot.id;
+    if (selectedSlot?.id) payload.slot_id = selectedSlot.id;
+    if (type === "home") payload.collection_address = collectionAddress;
     try {
       const result = await bookAppointment(payload);
       console.log("Book appointment result:", result);
       if (result) {
-        Alert.alert("Đặt lịch thành công!");
-        navigation.goBack();
+        // Alert.alert("Đặt lịch thành công!");
+        // navigation.goBack();
+        navigation.navigate("PayOSMethodWebViewScreen", {
+          appointmentId: result._id,
+        });
       } else {
         Alert.alert("Đặt lịch thất bại!", "Không nhận được phản hồi từ server");
       }
     } catch (error) {
       console.log("Error during booking:", error);
-      Alert.alert(
-        "Đặt lịch thất bại!",
-        error.message || "Có lỗi không xác định"
-      );
+      
+      // Alert.alert(
+      //   "Đặt lịch thất bại!",
+      //   error.message || "Có lỗi không xác định"
+      // );
     } finally {
       setIsSubmitting(false);
     }
@@ -128,8 +156,9 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
           selectedValue={type}
           onValueChange={setType}
           style={styles.picker}
-          enabled={false}
         >
+          <Picker.Item label="Tự gửi mẫu" value="self" />
+          <Picker.Item label="Lấy mẫu tại nhà" value="home" />
           <Picker.Item label="Lấy mẫu tại cơ sở" value="facility" />
         </Picker>
       </View>
@@ -148,22 +177,37 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
 
       <Text style={styles.label}>Ngày kết thúc (YYYY-MM-DD)</Text>
       <TextInput style={styles.input} value={endDate} editable={false} />
-
-      <Text style={styles.label}>Mã hồ sơ</Text>
-      <TextInput
+      {/* <TextInput
         style={styles.input}
-        value={caseNumber}
-        onChangeText={setCaseNumber}
-        placeholder="Nhập mã hồ sơ"
-      />
+        value={endDate}
+        onChangeText={(text) => setEndDate(text)}
+      /> */}
 
-      <Text style={styles.label}>Mã xác nhận</Text>
-      <TextInput
-        style={styles.input}
-        value={authorizationCode}
-        onChangeText={setAuthorizationCode}
-        placeholder="Nhập mã xác nhận"
-      />
+      {/* <Text style={styles.label}>Loại lấy mẫu (lọc slot)</Text> */}
+      {/* <View style={styles.pickerWrapper}>
+        <Picker
+          selectedValue={type}
+          onValueChange={setType}
+          style={styles.picker}
+        >
+          <Picker.Item label="Tất cả" value="" />
+          <Picker.Item label="Tự lấy mẫu" value="self" />
+          <Picker.Item label="Lấy mẫu tại nhà" value="home" />
+          <Picker.Item label="Lấy mẫu tại cơ sở" value="facility" />
+        </Picker>
+      </View> */}
+
+      {type === "home" && (
+        <>
+          <Text style={styles.label}>Địa chỉ lấy mẫu</Text>
+          <TextInput
+            style={styles.input}
+            value={collectionAddress}
+            onChangeText={setCollectionAddress}
+            placeholder="Nhập địa chỉ"
+          />
+        </>
+      )}
 
       <Text style={styles.label}>Chọn lịch hẹn</Text>
       {isLoadingSlots || loadingSlotsFromHook ? (
@@ -177,8 +221,19 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
           extraData={selectedSlot}
           renderItem={({ item }) => {
             const isSelected = selectedSlot?.id === item.id;
+            const isDisabled = type === "self";
             return (
               <TouchableOpacity
+                // style={[
+                //   styles.slotItem,
+                //   isSelected && !isDisabled && styles.slotItemSelected,
+                //   isDisabled && { opacity: 0.5 },
+                // ]}
+                // onPress={() => {
+                //   if (!isDisabled) handleSlotPress(item);
+                // }}
+                // activeOpacity={isDisabled ? 1 : 0.7}
+                // disabled={isDisabled}
                 style={[styles.slotItem, isSelected && styles.slotItemSelected]}
                 onPress={() => handleSlotPress(item)}
                 activeOpacity={0.7}
@@ -207,6 +262,13 @@ export default function CreateAppointmentAdministrative({ route, navigation }) {
           style={{ maxHeight: 200, marginBottom: 10 }}
         />
       )}
+      {/* {type === "self" && (
+        <Text style={styles.info}>
+          Vì tự gửi mẫu nên quý khách có thể chọn lịch hẹn hoặc không, chúng tôi
+          sẽ thông báo khi nhận được mẫu và trả kết quả trong vòng 3 ngày từ
+          ngày nhận mẫu.
+        </Text>
+      )} */}
 
       <TouchableOpacity
         style={[styles.submitButton, isSubmitting && { opacity: 0.6 }]}
@@ -243,6 +305,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   error: { color: "red", marginTop: 10, textAlign: "center" },
+  info: {
+    color: "#007AFF",
+    marginTop: 10,
+    marginBottom: 10,
+    fontStyle: "italic",
+    textAlign: "center",
+  },
   slotItem: {
     padding: 10,
     borderWidth: 1,

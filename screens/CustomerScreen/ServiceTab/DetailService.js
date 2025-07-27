@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServiceById } from "../../feartures/service/serviceSlice";
+import { fetchServiceById } from "../../../feartures/service/serviceSlice";
 
 export default function DetailService({ route, navigation }) {
   const { serviceId } = route.params;
@@ -36,7 +36,7 @@ export default function DetailService({ route, navigation }) {
         source={
           selectedService.image_url
             ? { uri: selectedService.image_url }
-            : require("../../assets/DNA.jpg")
+            : require("../../../assets/DNA.jpg")
         }
         style={styles.image}
         resizeMode="contain"

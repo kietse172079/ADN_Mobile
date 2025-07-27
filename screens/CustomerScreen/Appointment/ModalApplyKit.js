@@ -11,7 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import useSample from "../../hooks/useSample";
+import useSample from "../../../hooks/useSample";
 
 const sampleTypeOptions = [
   { label: "Máu", value: "blood" },

@@ -8,6 +8,10 @@ const API = {
   REGISTER: `${BASE_URL}/api/users`,
   LOGIN_WITH_GOOGLE: `${BASE_URL}/api/auth/google`,
 
+  // User endpoints
+  UPDATE_USER_BY_ID: (id) => `${BASE_URL}/api/users/${id}`,
+  CHANGE_PASSWORD: `${BASE_URL}/api/users/change-password`,
+
   //Service endpoint
   FETCH_SERVICES: `${BASE_URL}/api/service/search`,
   FETCH_SERVICE_BY_ID: (id) => `${BASE_URL}/api/service/${id}`,

@@ -12,9 +12,9 @@ import {
 import { Button, Card, Checkbox } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import useSample from "../../hooks/useSample";
+import useSample from "../../../hooks/useSample";
 import ViewSampleAppointmentDetailModal from "./ViewSampleAppointmentDetailModal";
-import ModalViewTestResult from "./ModalViewTestResult";
+import ModalViewTestResult from "./AppointmentResultTab/ModalViewTestResult";
 
 const statusColor = (status) => {
   switch (status?.toLowerCase()) {

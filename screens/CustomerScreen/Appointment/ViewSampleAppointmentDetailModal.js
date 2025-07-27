@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Button, Card } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import useSample from "../../hooks/useSample";
+import useSample from "../../../hooks/useSample";
 
 const ViewSampleAppointmentDetailModal = ({
   sampleId,

@@ -11,7 +11,7 @@ import {
 import { WebView } from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import usePayment from "../../hooks/usePayment";
+import usePayment from "../../../hooks/usePayment";
 
 const PayOSMethodWebViewScreen = () => {
   const navigation = useNavigation();

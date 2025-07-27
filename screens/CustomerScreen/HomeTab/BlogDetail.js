@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import useBlog from "../../hooks/useBlog";
+import useBlog from "../../../hooks/useBlog";
 
 const BlogDetail = () => {
   const route = useRoute();

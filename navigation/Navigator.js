@@ -3,28 +3,28 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../screens/LoginRegister/LoginScreen";
-import HomeScreen from "../screens/CustomerScreen/HomeScreen";
+import HomeScreen from "../screens/CustomerScreen/HomeTab/HomeScreen";
 import { useDispatch, useSelector } from "react-redux";
 import RegisterScreen from "../screens/LoginRegister/RegisterScreen";
 import WelcomeScreen from "../screens/LoginRegister/WelcomeScreen";
-import ProfileScreen from "../screens/CustomerScreen/ProfileScreen";
+import ProfileScreen from "../screens/CustomerScreen/ProfileTab/ProfileScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { login, logout } from "../feartures/user/authSlice";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
-import DetailService from "../screens/CustomerScreen/DetailService";
-import CreateAppointmentCivil from "../screens/CustomerScreen/CreateAppointmentCivil";
-import ViewAppointmentschedulelist from "../screens/CustomerScreen/ViewAppointmentschedulelist";
-import AppointmentDetail from "../screens/CustomerScreen/AppointmentDetail";
-import ViewSampleAppointment from "../screens/CustomerScreen/ViewSampleAppointment";
-import ViewService from "../screens/CustomerScreen/ViewService";
-import CheckoutSampleScreen from "../screens/CustomerScreen/CheckoutSampleScreen";
-import PayOSReturnScreen from "../screens/CustomerScreen/PayOSReturnScreen";
-import CreateAppointmentAdministrative from "../screens/CustomerScreen/CreateAppointmentAdministrative";
-import PayOSMethodWebViewScreen from "../screens/CustomerScreen/PayOSMethodWebViewScreen";
-import BlogDetail from "../screens/CustomerScreen/BlogDetail";
-import ViewAppointmentResultlist from "../screens/CustomerScreen/ViewAppointmentResultlist";
+import DetailService from "../screens/CustomerScreen/ServiceTab/DetailService";
+import CreateAppointmentCivil from "../screens/CustomerScreen/ServiceTab/CreateAppointmentCivil";
+import ViewAppointmentschedulelist from "../screens/CustomerScreen/Appointment/AppointmentTab/ViewAppointmentschedulelist";
+import AppointmentDetail from "../screens/CustomerScreen/Appointment/AppointmentDetail";
+import ViewSampleAppointment from "../screens/CustomerScreen/Appointment/ViewSampleAppointment";
+import ViewService from "../screens/CustomerScreen/ServiceTab/ViewService";
+import CheckoutSampleScreen from "../screens/CustomerScreen/Appointment/AppointmentTab/CheckoutSampleScreen";
+import PayOSReturnScreen from "../screens/CustomerScreen/PayOS/PayOSReturnScreen";
+import CreateAppointmentAdministrative from "../screens/CustomerScreen/ServiceTab/CreateAppointmentAdministrative";
+import PayOSMethodWebViewScreen from "../screens/CustomerScreen/PayOS/PayOSMethodWebViewScreen";
+import BlogDetail from "../screens/CustomerScreen/HomeTab/BlogDetail";
+import ViewAppointmentResultlist from "../screens/CustomerScreen/Appointment/AppointmentResultTab/ViewAppointmentResultlist";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -158,7 +158,7 @@ function AppointmentStack() {
   );
 }
 
-// HomeStack cho tab Thông báo
+// AppointmentStack cho tab Thông báo
 const AppointmentResultStackNav = createStackNavigator();
 function AppointmentResultStack() {
   return (

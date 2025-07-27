@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "../services/apiClient";
 import API from "../services/apiConfig";
+import { setUser } from "../feartures/user/authSlice";
 
 const useAuth = () => {
-  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-
   const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserData = async () => {
     try {
@@ -26,7 +26,10 @@ const useAuth = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      setUser(response.data.data || response.data.user || response.data);
+
+      const userData =
+        response.data.data || response.data.user || response.data;
+      dispatch(setUser({ user: userData }));
     } catch (error) {
       console.error("Error fetch data user", error);
     } finally {
@@ -48,6 +51,7 @@ const useAuth = () => {
     phoneNumber: user?.phone_number,
     role: user?.role,
     email: user?.email,
+    gender: user?.gender,
     user,
     isLoading,
     refreshUserData: fetchUserData,

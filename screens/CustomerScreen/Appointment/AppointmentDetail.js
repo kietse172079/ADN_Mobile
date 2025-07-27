@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import useSample from "../../hooks/useSample";
+import useSample from "../../../hooks/useSample";
 import ModalApplyKit from "./ModalApplyKit";
 
 const statusColor = (status) => {

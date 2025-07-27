@@ -8,9 +8,9 @@ import {
   FlatList,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { theme } from "../../theme/theme";
+import { theme } from "../../../theme/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useService } from "../../hooks/useService";
+import { useService } from "../../../hooks/useService";
 
 export default function ViewService({ navigation }) {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -46,7 +46,7 @@ export default function ViewService({ navigation }) {
     <View style={styles.container}>
       {/* Banner quảng cáo */}
       <Image
-        source={require("../../assets/DNA.jpg")}
+        source={require("../../../assets/DNA.jpg")}
         style={styles.banner}
         resizeMode="cover"
       />
@@ -148,7 +148,7 @@ export default function ViewService({ navigation }) {
               source={
                 item.image_url
                   ? { uri: item.image_url }
-                  : require("../../assets/DNA.jpg")
+                  : require("../../../assets/DNA.jpg")
               }
               style={styles.serviceImage}
             />

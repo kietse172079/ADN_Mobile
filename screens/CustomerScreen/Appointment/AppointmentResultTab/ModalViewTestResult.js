@@ -10,7 +10,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import useResult from "../../hooks/useResult";
+import useResult from "../../../../hooks/useResult";
 
 const ModalViewTestResult = ({ visible, onClose, appointmentId }) => {
   const { getResultsByAppointment, resultsByAppointment, isLoading } =

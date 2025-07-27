@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,13 +6,16 @@ import {
   Image,
   ActivityIndicator,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
-import useAuth from "../../hooks/useAuth";
-import { CustomButton } from "../../components/Button";
+import useAuth from "../../../hooks/useAuth";
+import { CustomButton } from "../../../components/Button";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logout } from "../../feartures/user/authSlice";
+import { logout } from "../../../feartures/user/authSlice";
+import ModalEditProfile from "./ModalEditProfile";
+import ModalChangePassword from "./ModalChangePassword";
 
 export default function ProfileScreen() {
   const {
@@ -23,10 +26,15 @@ export default function ProfileScreen() {
     dob,
     phoneNumber,
     email,
+    gender,
     isLoading,
+    userId,
+    user,
+    refreshUserData,
   } = useAuth();
-
   const dispatch = useDispatch();
+  const [editVisible, setEditVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleLogout = async () => {
     dispatch(logout());
@@ -71,17 +79,60 @@ export default function ProfileScreen() {
         </Text>
       </View>
       <View style={styles.infoBox}>
+        <Feather name="user" size={20} color="#007AFF" />
+        <Text style={styles.infoText}>
+          Giới tính:{" "}
+          {gender === "male"
+            ? "Nam"
+            : gender === "female"
+              ? "Nữ"
+              : gender || "Chưa có"}
+        </Text>
+      </View>
+      <View style={styles.infoBox}>
         <MaterialIcons name="cake" size={20} color="#007AFF" />
         <Text style={styles.infoText}>Ngày sinh: {formattedDob}</Text>
       </View>
-      {/* <View style={styles.infoBox}>
+      <View style={styles.infoBox}>
         <MaterialIcons name="location-on" size={20} color="#007AFF" />
-        <Text style={styles.infoText}>Địa chỉ: {address || "Chưa có"}</Text>
-      </View> */}
+        <Text style={styles.infoText}>
+          Địa chỉ:{" "}
+          {address
+            ? `${address.street || ""}, ${address.ward || ""}, ${
+                address.district || ""
+              }, ${address.city || ""}, ${address.country || ""}`
+            : "Chưa có"}
+        </Text>
+      </View>
 
       <View style={styles.logoutContainer}>
-        <CustomButton title="Logout" onPress={handleLogout} type="primary" />
+        <CustomButton
+          title="Chỉnh sửa thông tin"
+          onPress={() => setEditVisible(true)}
+        />
+        {!user?.google_id && (
+          <CustomButton
+            title="Đổi mật khẩu"
+            onPress={() => setPasswordVisible(true)}
+          />
+        )}
+        <CustomButton title="Đăng xuất" onPress={handleLogout} type="danger" />
       </View>
+
+      {editVisible && (
+        <ModalEditProfile
+          visible={editVisible}
+          onClose={() => setEditVisible(false)}
+          refreshUserData={refreshUserData}
+        />
+      )}
+      {passwordVisible && (
+        <ModalChangePassword
+          visible={passwordVisible}
+          onClose={() => setPasswordVisible(false)}
+          userId={userId}
+        />
+      )}
     </View>
   );
 }
@@ -139,10 +190,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     color: "#333",
+    flexShrink: 1,
   },
   logoutContainer: {
     marginTop: 32,
     width: "100%",
-    alignItems: "center",
+    gap: 12,
   },
 });

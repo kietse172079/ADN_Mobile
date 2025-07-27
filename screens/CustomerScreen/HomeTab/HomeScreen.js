@@ -8,8 +8,8 @@ import {
   FlatList,
 } from "react-native";
 import { useSelector } from "react-redux";
-import useBlog from "../../hooks/useBlog";
-import { theme } from "../../theme/theme";
+import useBlog from "../../../hooks/useBlog";
+import { theme } from "../../../theme/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function HomeScreen({ navigation }) {
@@ -34,7 +34,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/DNA.jpg")}
+        source={require("../../../assets/DNA.jpg")}
         style={styles.banner}
         resizeMode="cover"
       />
@@ -83,7 +83,7 @@ export default function HomeScreen({ navigation }) {
               source={
                 item.images?.[0]?.image_url
                   ? { uri: item.images[0].image_url }
-                  : require("../../assets/DNA.jpg")
+                  : require("../../../assets/DNA.jpg")
               }
               style={styles.blogImage}
             />

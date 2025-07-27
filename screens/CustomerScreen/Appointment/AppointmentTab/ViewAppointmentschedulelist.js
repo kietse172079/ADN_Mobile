@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useAppointment } from "../../hooks/useAppointment";
+import { useAppointment } from "../../../../hooks/useAppointment";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { theme } from "../../theme/theme";
+import { theme } from "../../../../theme/theme";
 
 const PAGE_SIZE = 10;
 
@@ -94,8 +94,8 @@ export default function ViewAppointmentschedulelist() {
     try {
       const res = await getAppointments({ pageNum: page, pageSize: PAGE_SIZE });
       const items = (res?.data?.pageData || []).filter(
-      (item) => item.status?.toLowerCase() !== "completed"
-    );
+        (item) => item.status?.toLowerCase() !== "completed"
+      );
       const totalPages = res?.data?.pageInfo?.totalPages || 1;
 
       setAppointments((prev) => {
@@ -161,7 +161,7 @@ export default function ViewAppointmentschedulelist() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/DNA.jpg")}
+        source={require("../../../../assets/DNA.jpg")}
         style={styles.banner}
         resizeMode="cover"
       />

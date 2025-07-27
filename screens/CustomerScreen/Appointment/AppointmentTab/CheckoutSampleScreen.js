@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, Alert, ScrollView } from "react-native";
 import { Button, RadioButton, ActivityIndicator } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import useSample from "../../hooks/useSample";
-import usePayment from "../../hooks/usePayment";
-import { useAppointment } from "../../hooks/useAppointment";
+import useSample from "../../../../hooks/useSample";
+import usePayment from "../../../../hooks/usePayment";
+import { useAppointment } from "../../../../hooks/useAppointment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 
@@ -327,16 +327,16 @@ const CheckoutSampleScreen = () => {
               }}
             />
           ) : ( */}
-            <Button
-              mode="contained"
-              onPress={handlePayment}
-              loading={paying}
-              disabled={paying}
-              style={styles.payButton}
-              labelStyle={styles.payButtonLabel}
-            >
-              {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
-            </Button>
+          <Button
+            mode="contained"
+            onPress={handlePayment}
+            loading={paying}
+            disabled={paying}
+            style={styles.payButton}
+            labelStyle={styles.payButtonLabel}
+          >
+            {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
+          </Button>
           {/* )} */}
 
           {error && (
