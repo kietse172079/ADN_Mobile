@@ -31,7 +31,7 @@ const ModalChangePassword = ({ visible, onClose }) => {
     new_password: false,
     confirm_password: false,
   });
-//   console.log("userId:", userId);
+  //   console.log("userId:", userId);
 
   if (user?.google_id) return null;
 
@@ -45,13 +45,20 @@ const ModalChangePassword = ({ visible, onClose }) => {
 
   const handleSubmit = async () => {
     if (form.new_password !== form.confirm_password) {
-      Alert.alert("Lỗi", "Mật khẩu mới không khớp");
+      Alert.alert("Cảnh báo", "Mật khẩu mới không khớp");
       return;
     }
-    if (form.new_password.length < 6) {
-      Alert.alert("Lỗi", "Mật khẩu mới phải dài ít nhất 6 ký tự");
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s])[A-Za-z\d\S]{8,}$/;
+
+    if (!passwordRegex.test(form.new_password)) {
+      Alert.alert(
+        "Cảnh báo",
+        "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số, ký tự đặc biệt và không chứa khoảng trắng"
+      );
       return;
     }
+
     const result = await changeUserPassword({
       user_id: userId,
       old_password: form.old_password,

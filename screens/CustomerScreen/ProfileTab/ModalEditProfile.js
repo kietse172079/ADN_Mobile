@@ -263,7 +263,7 @@ const ModalEditProfile = ({ visible, onClose }) => {
           </View>
         </View>
 
-        <Text style={styles.subHeader}>Địa chỉ</Text>
+        <Text style={styles.subHeader}>Số nhà, đường</Text>
 
         <TextInput
           placeholder="Số nhà, đường"
@@ -271,21 +271,6 @@ const ModalEditProfile = ({ visible, onClose }) => {
           value={formData.address.street}
           onChangeText={(text) => handleAddressChange("street", text)}
         />
-
-        {renderPickerField(
-          "Tỉnh/Thành phố",
-          selectedCityCode,
-          handleCityChange,
-          cities
-        )}
-
-        {districts.length > 0 &&
-          renderPickerField(
-            "Quận/Huyện",
-            selectedDistrictCode,
-            handleDistrictChange,
-            districts
-          )}
 
         {formData.address.district &&
           renderPickerField(
@@ -296,6 +281,22 @@ const ModalEditProfile = ({ visible, onClose }) => {
             handleWardChange,
             wards
           )}
+
+        {districts.length > 0 &&
+          renderPickerField(
+            "Quận/Huyện",
+            selectedDistrictCode,
+            handleDistrictChange,
+            districts
+          )}
+
+        {renderPickerField(
+          "Tỉnh/Thành phố",
+          selectedCityCode,
+          handleCityChange,
+          cities
+        )}
+
         <Text style={styles.subHeader}>Quốc gia</Text>
         <TextInput
           placeholder="Quốc gia"
