@@ -25,6 +25,9 @@ import CreateAppointmentAdministrative from "../screens/CustomerScreen/ServiceTa
 import PayOSMethodWebViewScreen from "../screens/CustomerScreen/PayOS/PayOSMethodWebViewScreen";
 import BlogDetail from "../screens/CustomerScreen/HomeTab/BlogDetail";
 import ViewAppointmentResultlist from "../screens/CustomerScreen/Appointment/AppointmentResultTab/ViewAppointmentResultlist";
+import AboutScreen from "../screens/CustomerScreen/StaticScreen/AboutScreen";
+import GuideScreen from "../screens/CustomerScreen/StaticScreen/GuideScreen";
+import HomeWebScreen from "../screens/CustomerScreen/StaticScreen/HomeWebScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -76,6 +79,21 @@ function HomeStack() {
         component={BlogDetail}
         options={{ title: "Chi tiết bài viết" }}
       />
+      <HomeStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: "Giới thiệu" }}
+      />
+      <HomeStackNav.Screen
+        name="Guide"
+        component={GuideScreen}
+        options={{ title: "Hướng dẫn" }}
+      />
+      <HomeStackNav.Screen
+        name="HomeWeb"
+        component={HomeWebScreen}
+        options={{ title: "Tin tức" }}
+      />
     </HomeStackNav.Navigator>
   );
 }
@@ -110,10 +128,25 @@ function ServiceStack() {
         component={PayOSMethodWebViewScreen}
         options={{ title: "Thanh toán" }}
       />
-      <AppointmentStackNav.Screen
+      <ServiceStackNav.Screen
         name="PayOSReturnScreen"
         component={PayOSReturnScreen}
         options={{ title: "Kết quả thanh toán" }}
+      />
+      <ServiceStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: "Giới thiệu" }}
+      />
+      <ServiceStackNav.Screen
+        name="Guide"
+        component={GuideScreen}
+        options={{ title: "Hướng dẫn" }}
+      />
+      <ServiceStackNav.Screen
+        name="HomeWeb"
+        component={HomeWebScreen}
+        options={{ title: "Tin tức" }}
       />
     </ServiceStackNav.Navigator>
   );
@@ -154,11 +187,26 @@ function AppointmentStack() {
         component={PayOSReturnScreen}
         options={{ title: "Kết quả thanh toán" }}
       />
+      <AppointmentStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: "Giới thiệu" }}
+      />
+      <AppointmentStackNav.Screen
+        name="Guide"
+        component={GuideScreen}
+        options={{ title: "Hướng dẫn" }}
+      />
+      <AppointmentStackNav.Screen
+        name="HomeWeb"
+        component={HomeWebScreen}
+        options={{ title: "Tin tức" }}
+      />
     </AppointmentStackNav.Navigator>
   );
 }
 
-// AppointmentStack cho tab Thông báo
+// AppointmentStack cho tab Thông báo kết quả
 const AppointmentResultStackNav = createStackNavigator();
 function AppointmentResultStack() {
   return (
@@ -168,15 +216,30 @@ function AppointmentResultStack() {
         component={ViewAppointmentResultlist}
         options={{ headerShown: false }}
       />
-      <AppointmentStackNav.Screen
+      <AppointmentResultStackNav.Screen
         name="AppointmentDetail"
         component={AppointmentDetail}
         options={{ title: "Chi tiết lịch hẹn" }}
       />
-      <AppointmentStackNav.Screen
+      <AppointmentResultStackNav.Screen
         name="ViewSampleAppointment"
         component={ViewSampleAppointment}
         options={{ title: "Danh sách mẫu" }}
+      />
+      <AppointmentResultStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: "Giới thiệu" }}
+      />
+      <AppointmentResultStackNav.Screen
+        name="Guide"
+        component={GuideScreen}
+        options={{ title: "Hướng dẫn" }}
+      />
+      <AppointmentResultStackNav.Screen
+        name="HomeWeb"
+        component={HomeWebScreen}
+        options={{ title: "Tin tức" }}
       />
     </AppointmentResultStackNav.Navigator>
   );

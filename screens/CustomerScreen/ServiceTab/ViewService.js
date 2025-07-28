@@ -36,10 +36,14 @@ export default function ViewService({ navigation }) {
   }, [getServices]);
 
   const mainFeatures = [
-    { id: "1", title: "Lịch hẹn" },
-    { id: "2", title: "Liên hệ" },
-    { id: "3", title: "Tư vấn" },
-    { id: "4", title: "Cẩm nang" },
+    {
+      id: "1",
+      title: "Giới thiệu",
+      icon: "information-circle",
+      screen: "About",
+    },
+    { id: "2", title: "Hướng dẫn", icon: "book", screen: "Guide" },
+    { id: "3", title: "Tin tức", icon: "newspaper", screen: "HomeWeb" },
   ];
 
   return (
@@ -59,23 +63,18 @@ export default function ViewService({ navigation }) {
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.featureCard}>
+            <TouchableOpacity
+              style={styles.featureCard}
+              onPress={() => navigation.navigate(item.screen)}
+            >
               <Ionicons
-                name={
-                  item.title === "Lịch hẹn"
-                    ? "calendar"
-                    : item.title === "Liên hệ"
-                      ? "call"
-                      : item.title === "Tư vấn"
-                        ? "chatbox"
-                        : "medkit"
-                }
+                name={item.icon}
                 size={30}
                 color="#000"
                 style={styles.featureIcon}
               />
               <Text style={styles.featureText}>{item.title}</Text>
-            </View>
+            </TouchableOpacity>
           )}
           style={styles.featuresContainer}
         />
